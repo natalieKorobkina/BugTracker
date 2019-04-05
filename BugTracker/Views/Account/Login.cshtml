@@ -1,0 +1,47 @@
+﻿@model BugTracker.Models.LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "login100-form validate-form p-l-55 p-r-55 p-t-170", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <span class="login100-form-title">
+                    Sign In
+                </span>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="wrap-input100 validate-input m-b-16" data-validate="Please enter username">
+                    @Html.TextBoxFor(m => m.Email, new { placeholder = "Email/UserName", @class = "input100" })
+                    <span class="focus-input100"></span>
+                </div>
+
+                <div class="wrap-input100 validate-input" data-validate="Please enter password">
+                    @Html.PasswordFor(m => m.Password, new { placeholder = "Password", @class = "input100" })
+                    <span class="focus-input100"></span>
+                </div>
+
+                <div class="checkbox p-t-13">
+                    @Html.CheckBoxFor(m => m.RememberMe)
+                    @Html.LabelFor(m => m.RememberMe)
+                </div>
+
+                <div class="text-right p-t-13 p-b-23">
+                    <span class="txt1">
+                        Forgot
+                    </span>
+
+                    @Html.ActionLink("Password?", "ForgotPassword", new { }, new { @class = "txt2" })
+                </div>
+
+                <div class="container-login100-form-btn">
+                    <button type="submit" class="login100-form-btn"> Sign in </button>
+                </div>
+
+                <div class="flex-col-c p-t-80 p-b-40">
+                    <span class="txt1 p-b-9">
+                        Don’t have an account?
+                    </span>
+                    @Html.ActionLink("Register as a new user", "Register", new { }, new { @class = "txt3" })
+                </div>
+            }

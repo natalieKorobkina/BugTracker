@@ -1,0 +1,57 @@
+﻿@model EditMembersViewModel
+@{
+    ViewBag.Title = "My Projects";
+}
+
+@if (Model != null)
+{
+    <div>Members</div>
+    <table id="table_id" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Roles</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.ProjectMembers)
+            {
+                <tr>
+                    <td>@user.UserDisplayName</td>
+                    <td>@user.UserRoles</td>
+                    <td><a href="@Url.Action("RemoveMember", "Project", new { id = user.UserId })">Remove</a></td>
+
+                </tr>
+            }
+    </table>
+
+    <div>Users</div>
+    <table id="table_id" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Roles</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.NotMembers)
+            {
+                <tr>
+                    <td>@user.UserDisplayName</td>
+                    <td>@user.UserRoles</td>
+                    <td><a href="@Url.Action("AddUser", "Project", new { projectId = user.ProjectId, userId = user.UserId })">Add</a></td>
+
+                </tr>
+            }
+    </table>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#table_id').DataTable();
+        });
+    </script>
+}

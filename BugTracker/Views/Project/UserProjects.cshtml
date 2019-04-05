@@ -1,0 +1,43 @@
+﻿@model List<UserProjectsViewModel>
+@{
+    ViewBag.Title = "My Projects";
+}
+
+@if (Model != null)
+{
+    <table id="table_id" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Members</th>
+                <th>Tickets</th>
+                <th>Created</th>
+                <th>Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var project in Model)
+            {
+                <tr>
+                    <td>@project.Name</td>
+                    <td>@project.MembersNumber</td>
+                    <td>@project.TicketsNumber</td>
+                    <td>@project.DateCreated.ToString("dd-MM-yyyy HH:mm")</td>
+                    <td>
+                        @if (project.DateCreated != project.DateUpdated)
+                        {
+                            @project.DateUpdated.ToString("dd-MM-yyyy HH:mm")
+                        }
+                    </td>
+                </tr>
+            }
+    </table>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#table_id').DataTable();
+        });
+    </script>
+}

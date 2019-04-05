@@ -1,0 +1,36 @@
+﻿@model BugTracker.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "login100-form validate-form p-l-55 p-r-55 p-t-170", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <span class="login100-form-title">
+        Create new account
+    </span>
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="wrap-input100 validate-input m-b-16" data-validate="Please enter email/username">
+        @Html.TextBoxFor(m => m.Email, new { placeholder = "Email/Username", @class = "input100" })
+        <span class="focus-input100"></span>
+    </div>
+    <div class="wrap-input100 validate-input m-b-16" data-validate="Please enter password">
+        @Html.PasswordFor(m => m.Password, new { placeholder = "Password", @class = "input100" })
+        <span class="focus-input100"></span>
+    </div>
+    <div class="wrap-input100 validate-input m-b-16" data-validate="Please confirm password">
+        @Html.PasswordFor(m => m.ConfirmPassword, new { placeholder = "Confirm Password", @class = "input100" })
+        <span class="focus-input100"></span>
+    </div>
+    <div class="wrap-input100 validate-input m-b-16" data-validate="Please enter display name">
+        @Html.TextBoxFor(m => m.DisplayName, new { placeholder = "Display Name", @class = "input100" })
+        <span class="focus-input100"></span>
+    </div>
+    <div class="container-login100-form-btn m-b-16">
+        <button type="submit" class="login100-form-btn" value="Register"> Register </button>
+    </div>
+}
+<div class="container-login100-form-btn m-b-16">
+    @Html.ActionLink("Back to LogIn", "Login", new { }, new { @class = "txt3" })
+</div>

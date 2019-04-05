@@ -1,0 +1,28 @@
+﻿@model EditUserRolesViewModel
+@{
+    ViewBag.Title = "EditUserRole";
+}
+
+<h2>EditUserRole</h2>
+<hr>
+@using (Html.BeginForm("EditUserRoles", "Home", new { id = Model.UserId}, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <div>@Model.DisplayName</div>
+    <div>@Model.UserName</div>
+    
+    for(var i = 0; i < Model.UserRoles.Count(); i++)
+    {
+    <div>
+        @Html.Label(Model.UserRoles[i].RoleName)
+        @Html.CheckBoxFor(m => m.UserRoles[i].IsChecked, new { RoleName = Model.UserRoles[i].RoleName })
+        @Html.HiddenFor(m => m.UserRoles[i].RoleName)
+    </div>
+    }
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+
+            <input type="submit" value="Submit" class="btn btn-default" />
+        </div>
+    </div>
+}
+
