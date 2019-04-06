@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BugTracker.Models;
+using System.Text.RegularExpressions;
 
 namespace BugTracker.Controllers
 {
@@ -242,7 +243,12 @@ namespace BugTracker.Controllers
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
-            return code == null ? View("Error") : View();
+            if (code == null)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "Try again");
+            }
+            return   View();
         }
 
         //
@@ -447,7 +453,15 @@ namespace BugTracker.Controllers
         {
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError("", error);
+                if (error.StartsWith("Name"))
+                {
+                    var NameToEmail = Regex.Replace(error, "Name", "Email");
+                    ModelState.AddModelError("", NameToEmail);
+                }
+                else
+                {
+                    ModelState.AddModelError("", error);
+                }
             }
         }
 

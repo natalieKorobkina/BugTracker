@@ -7,6 +7,8 @@ namespace BugTracker.Models.ViewModels
 {
     public class EditMembersViewModel
     {
+        public int? ProjectId { get; set; }
+        public string ProjectName { get; set; }
         public List<User> ProjectMembers { get; set; }
         public List<User> NotMembers { get; set; }
 
@@ -19,7 +21,6 @@ namespace BugTracker.Models.ViewModels
 
     public class User
     {
-        public int? ProjectId { get; set; }
         public string UserId { get; set; }
         public string UserDisplayName { get; set; }
         public string UserRoles { get; set; }

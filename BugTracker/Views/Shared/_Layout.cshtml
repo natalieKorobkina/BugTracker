@@ -33,18 +33,6 @@
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                     <span class="ti-view-list"></span>
                 </button>
-                <ul class="navbar-nav mr-lg-2">
-                    <li class="nav-item nav-search d-none d-lg-block">
-                        <div class="input-group">
-                            <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
-                                <span class="input-group-text" id="search">
-                                    <i class="ti-search"></i>
-                                </span>
-                            </div>
-                            <input type="text" class="form-control" id="navbar-search-input" placeholder="Search" aria-label="search" aria-describedby="search">
-                        </div>
-                    </li>
-                </ul>
                 <ul class="navbar-nav navbar-nav-right">
                     <li class="nav-item nav-profile dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
@@ -54,72 +42,73 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                             <div class="card-body">
-                                @User.Identity.GetUserName()
+                                @{
+                                    var manager = new UserManager<ApplicationUser>(new Microsoft.AspNet.Identity.EntityFramework.UserStore<ApplicationUser>(new ApplicationDbContext()));
+                                    var currentUser = manager.FindById(User.Identity.GetUserId());
+                                }
+                                <div class="text-center">
+                                    <p style="font-weight:Bold;">@currentUser.DisplayName</p>
+                                </div>
 
-                                <a href="@Url.Action("Index", "Manage", new {title = "Manage", @class = "dropdown-item" })">
-                                    <i class="ti-settings text-primary"></i> Settings
-
-                                    @*@Html.ActionLink("Settings", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage", @class = "dropdown-item" })*@
-                                </a>
-                            </div>
-
-                            <a class="dropdown-item">
-
+                                @using (Html.BeginForm("Index", "Manage", FormMethod.Post, new { id = "SettingForm", @class = "navbar-right" }))
+                                {
+                                    <a class="dropdown-item" href="javascript:document.getElementById('SettingForm').submit()">
+                                        <i class="ti-settings text-primary"></i> Settings
+                                    </a>
+                                }
                                 @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
                                 {
-
-                                    <a href="javascript:document.getElementById('logoutForm').submit()"> < i class="ti-power-off text-primary" /> Log off</a>
-
+                                    @Html.AntiForgeryToken()
+                                    <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()">
+                                        <i class="ti-power-off text-primary"></i> Log Off
+                                    </a>
                                 }
-                            </a>
+                            </div>
+
                         </div>
                     </li>
                 </ul>
-                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-                    <span class="ti-view-list"></span>
-                </button>
             </div>
         </nav>
-        <!-- partial -->
         <div class="container-fluid page-body-wrapper">
-            <!-- partial:partials/_sidebar.html -->
             <nav class="sidebar sidebar-offcanvas" id="sidebar">
                 <ul class="nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Index", "Home")">
+                        <a href="@Url.Action("Index", "Home")" class="nav-link">
                             <i class="ti-shield menu-icon"></i>
                             <span class="menu-title">Dashboard</span>
                         </a>
                     </li>
+                    @if (User.IsInRole("Admin"))
+                    { 
+                        <li class="nav-item">
+                            <a href="@Url.Action("ManageUsers", "Home")" class="nav-link">
+                                <i class="ti-lock menu-icon"></i>
+                                <span class="menu-title">Users Manager</span>
+                            </a>
+                        </li>
+
                     <li class="nav-item">
-                        <a href="@Url.Action("ManageUsers", "Home")" class="nav-link">
-                            <i class="ti-lock menu-icon"></i>
-                            <span class="menu-title">Users Manager</span>
+                        <a href="@Url.Action("AllProjects", "Project")" class="nav-link">
+                            <i class="ti-layers-alt menu-icon"></i>
+                            <span class="menu-title">All Projects</span>
                         </a>
                     </li>
-                    @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
-                    {
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index", "Project")" class="nav-link">
-                                <i class="ti-layers-alt menu-icon"></i>
-                                <span class="menu-title">All Projects</span>
-                            </a>
-                        </li>
                     }
-                        <li class="nav-item">
-                            <a href="@Url.Action("UserProjects", "Project")" class="nav-link">
-                                <i class="ti-layers-alt menu-icon"></i>
-                                <span class="menu-title">My Projects</span>
-                            </a>
-                        </li>
-                    </ul>
+                    <li class="nav-item">
+                        <a href="@Url.Action("UserProjects", "Project")" class="nav-link">
+                            <i class="ti-layers menu-icon"></i>
+                            <span class="menu-title">My Projects</span>
+                        </a>
+                    </li>
+                </ul>
             </nav>
             <div class="main-panel">
                 <div class="content-wrapper">
                     <div class="row">
                         <div class="col-md-12 grid-margin card">
-                            <div class="d-flex justify-content-between align-items-center card-body">
-                                <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="card-body" >
                                     @RenderBody()
                                 </div>
                             </div>

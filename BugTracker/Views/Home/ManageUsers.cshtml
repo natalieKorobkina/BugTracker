@@ -1,10 +1,13 @@
 ﻿@model ManageUsersViewModel
 @{
-    ViewBag.Title = "ManageUsers";
+    ViewBag.Title = "Manage Users";
 }
 
-<h3>ManageUsers</h3>
-<table id="table_id" class="display" style="width:100%">
+<div>
+    <h3>Manage Users' Roles</h3>
+</div>
+<hr />
+<table id="table_id" style="width: 100%">
     <thead>
         <tr>
             <th>Name</th>
@@ -19,22 +22,26 @@
     <tbody>
         @foreach (var user in Model.Users)
         {
-        <tr>
-            <td>@user.DisplayName</td>
-            <td>@user.UserName</td>
-            @for (var i = 0; i < Model.AllRoles.Count(); i++)
-            {
-                if (user.UserRoles.Contains(Model.AllRoles[i]))
+            <tr>
+                <td>@user.DisplayName</td>
+                <td>@user.UserName</td>
+                @for (var i = 0; i < Model.AllRoles.Count(); i++)
                 {
-                    <td>+</td>
+                    if (user.UserRoles.Contains(Model.AllRoles[i]))
+                    {
+                        <td><i class="ti-flag-alt menu-icon"></i></td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
                 }
-                else
-                {
-                    <td>-</td>
-                }
-            }
-            <td><a href="@Url.Action("EditUserRoles", "Home", new { id = user.UserId })">Edit</a></td>
-        </tr>
+                <td>
+                    <a title="Manage User's Roles" href="@Url.Action("EditUserRoles", "Home", new { id = user.UserId })">
+                        <i class="ti-list text-primary"></i>
+                    </a>
+                </td>
+            </tr>
         }
 </table>
 
