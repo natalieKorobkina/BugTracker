@@ -264,7 +264,6 @@ namespace BugTracker.Controllers
             }
             var currentUser = UserManager.FindById(User.Identity.GetUserId());
             
-            //user.Email = email;
             currentUser.DisplayName = model.NewName;
 
             var result = await UserManager.UpdateAsync(currentUser);
