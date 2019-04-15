@@ -1,0 +1,79 @@
+﻿@model List<AllTicketsViewModel>
+@{
+    ViewBag.Title = "All Tickets";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (Model.Any())
+{
+    <table id="table_id" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Project</th>
+                <th></th>
+                <th>Title</th>
+                <th>Created</th>
+                <th>Updated</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Creator</th>
+                <th>Assigned Developer</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in Model)
+            {
+                <tr>
+                    <td>
+                        <a title="Ticket Details" href="@Url.Action("TicketDetails", "Ticket", new { id = ticket.Id })">
+                            <i class="ti-receipt text-primary"></i>
+                        </a>
+                        @ticket.Id
+                    </td>
+                    <td>@ticket.Project.Name</td>
+                    <td>
+                        @if (ticket.EditAvailable == true)
+                        {
+                            <a title="Edit Ticket" href="@Url.Action("Edit", "Ticket", new { id = ticket.Id })">
+                                <i class="ti-pencil text-primary"></i>
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @ticket.Title
+                    </td>
+                    <td>@ticket.DateCreated.ToString("dd-MM-yyyy HH:mm")</td>
+                    <td>
+                        @if (ticket.DateUpdated != null)
+                        {
+                            @ticket.DateUpdated.ToString("dd-MM-yyyy HH:mm")
+                        }
+                    </td>
+                    <td>@ticket.TicketType.Name</td>
+                    <td>@ticket.TicketStatus.Name</td>
+                    <td>@ticket.TicketPriority.Name</td>
+                    <td>@ticket.OwnerUser.DisplayName</td>
+                    <td>
+                        <a title="Assign Developer" href="@Url.Action("TicketsAssignment", "Ticket", new { id = ticket.Id })">
+                            <i class="ti-link text-primary"></i>
+                        </a>
+                        @if (ticket.AssignedToUser != null)
+                        {
+                            @ticket.AssignedToUser.DisplayName
+                        }
+                    </td>
+                </tr>
+            }
+    </table>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#table_id').DataTable();
+        });
+    </script>
+}

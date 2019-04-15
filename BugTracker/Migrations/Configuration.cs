@@ -5,6 +5,7 @@ namespace BugTracker.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
     using BugTracker.Models;
+    using BugTracker.Models.Domain;
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -19,10 +20,31 @@ namespace BugTracker.Migrations
         protected override void Seed(BugTracker.Models.ApplicationDbContext context)
         {
             //  This method will be called after migrating to the latest version.
-
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data.
 
+            // Seeding Tickets' Types
+            foreach (var type in ProjectConstants.AllowedTicketTypes)
+            {
+                TicketType ticketType = new TicketType();
+                ticketType.Name = type;
+                context.TicketTypes.AddOrUpdate(p => p.Name, ticketType);
+            }
+            // Seeding Tickets' Statuses
+            foreach (var status in ProjectConstants.AllowedTicketStatuses)
+            {
+                TicketStatus ticketStatus = new TicketStatus();
+                ticketStatus.Name = status;
+                context.TicketStatuses.AddOrUpdate(p => p.Name, ticketStatus);
+            }
+            // Seeding Tickets' Priorities
+            foreach (var priority in ProjectConstants.AllowedTicketPriorities)
+            {
+                TicketPriority ticketPriority = new TicketPriority();
+                ticketPriority.Name = priority;
+                context.TicketPriorities.AddOrUpdate(p => p.Name, ticketPriority);
+            }
+            // Seeding Users' Roles
             var Roles = SeededRoles.CreateRolesList();
             var Accounts = SeededRoles.CreateAccountsList();
 
@@ -36,11 +58,11 @@ namespace BugTracker.Migrations
                     roleManager.Create(roleToAdd);
                 }
             }
-
+            // Seeding Users
             foreach (var account in Accounts)
             {
                 //Creating the user with their role
-                var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+                var userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(context));
 
                 ApplicationUser userToCreate;
 
@@ -57,7 +79,6 @@ namespace BugTracker.Migrations
                 {
                     userToCreate = context.Users.First(p => p.UserName == account.Email);
                 }
-
                 //Make sure the user is on its role
                 if (!userManager.IsInRole(userToCreate.Id, account.Role))
                 {
@@ -66,7 +87,6 @@ namespace BugTracker.Migrations
             }
 
             context.SaveChanges();
-
         }
     }
 }

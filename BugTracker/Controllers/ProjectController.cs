@@ -58,7 +58,7 @@ namespace BugTracker.Controllers
             return View(model);
         }
 
-        public ActionResult EditMembers(int? id)
+        public ActionResult EditMembers(int id)
         {
             var usersInProject = bugTrackerHelper.GetProjectUsersById(id);
             var allUsers = bugTrackerHelper.GetAllUsers();

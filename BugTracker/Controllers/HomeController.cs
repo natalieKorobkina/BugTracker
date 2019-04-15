@@ -9,19 +9,23 @@ using BugTracker.Models;
 using BugTracker.Models.Helpers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin;
+using Microsoft.Owin.Host.SystemWeb;
+using Microsoft.Owin.Security;
 
 namespace BugTracker.Controllers
 {
     public class HomeController : Controller
     {
         private ApplicationDbContext DbContext;
-        private UserManager<ApplicationUser> userManager;
+        private ApplicationUserManager UserManager;
         private BugTrackerHelper bugTrackerHelper;
 
         public HomeController()
         {
             DbContext = new ApplicationDbContext();
-            userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+            UserManager = new ApplicationUserManager(new UserStore<ApplicationUser>(new ApplicationDbContext()));
             bugTrackerHelper = new BugTrackerHelper(DbContext);
         }
 
@@ -42,7 +46,7 @@ namespace BugTracker.Controllers
                 UserId = user.Id,
                 UserName = user.UserName,
                 DisplayName = user.DisplayName,
-                UserRoles = userManager.GetRoles(user.Id).ToList()
+                UserRoles = UserManager.GetRoles(user.Id).ToList()
 
             }).ToList();
 
@@ -69,16 +73,15 @@ namespace BugTracker.Controllers
 
                 role.RoleName = allRoles[i];
 
-                if (userManager.IsInRole(id, allRoles[i]))
+                if (UserManager.IsInRole(id, allRoles[i]))
                 {
                     role.IsChecked = true;
-                    model.UserRoles.Add(role);
                 }
                 else
                 {
                     role.IsChecked = false;
-                    model.UserRoles.Add(role);
                 }
+                model.UserRoles.Add(role);
             }
 
             return View(model);
@@ -93,20 +96,29 @@ namespace BugTracker.Controllers
 
             foreach (var role in formData.UserRoles)
             {
-                if (role.IsChecked && !userManager.IsInRole(user.Id, role.RoleName))
+                if (role.IsChecked && !UserManager.IsInRole(user.Id, role.RoleName))
                 {
-                    userManager.AddToRole(user.Id, role.RoleName);
+                    UserManager.AddToRole(user.Id, role.RoleName);
                 }
-                else if (!role.IsChecked && userManager.IsInRole(user.Id, role.RoleName))
+                else if (!role.IsChecked && UserManager.IsInRole(user.Id, role.RoleName))
                 {
                     if (!(currentUserId == id && role.RoleName == "Admin"))
                     {
-                        userManager.RemoveFromRole(user.Id, role.RoleName);
+                        UserManager.RemoveFromRole(user.Id, role.RoleName);
                     }
                 }
             }
 
+            if (id == currentUserId)
+            {
+                var authenticationManager = HttpContext.GetOwinContext().Authentication;
+                var identity = UserManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+
+                authenticationManager.SignIn(new AuthenticationProperties { IsPersistent = false }, identity);
+            }
+
             return RedirectToAction(nameof(HomeController.ManageUsers));
         }
+
     }
 }

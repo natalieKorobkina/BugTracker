@@ -15,7 +15,7 @@ namespace BugTracker.Models
         public RolesHelper(ApplicationDbContext db)
         {
             context = db;
-            userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
+            userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(new ApplicationDbContext()));
         }
 
         public bool IsUserInRole(string userId, string roleName)

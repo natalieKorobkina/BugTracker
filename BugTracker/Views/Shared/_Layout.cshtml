@@ -80,7 +80,7 @@
                         </a>
                     </li>
                     @if (User.IsInRole("Admin"))
-                    { 
+                    {
                         <li class="nav-item">
                             <a href="@Url.Action("ManageUsers", "Home")" class="nav-link">
                                 <i class="ti-lock menu-icon"></i>
@@ -88,18 +88,59 @@
                             </a>
                         </li>
 
-                    <li class="nav-item">
-                        <a href="@Url.Action("AllProjects", "Project")" class="nav-link">
-                            <i class="ti-layers-alt menu-icon"></i>
-                            <span class="menu-title">All Projects</span>
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("AllProjects", "Project")" class="nav-link">
+                                <i class="ti-layers-alt menu-icon"></i>
+                                <span class="menu-title">All Projects</span>
+                            </a>
+                        </li>
                     }
                     <li class="nav-item">
                         <a href="@Url.Action("UserProjects", "Project")" class="nav-link">
                             <i class="ti-layers menu-icon"></i>
                             <span class="menu-title">My Projects</span>
                         </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="collapse" href="#tickets" aria-expanded="false" aria-controls="tickets">
+                            <i class="ti-file menu-icon"></i>
+                            <span class="menu-title">Tickets</span>
+                        </a>
+                        <div class="collapse" id="tickets">
+                            <ul class="nav flex-column sub-menu">
+                                @if (User.IsInRole("Submitter"))
+                                {
+                                    <li class="nav-item">
+                                        <a href="@Url.Action("Create", "Ticket")" class="nav-link">
+                                            <i class="ti-plus menu-icon"></i>
+                                            <span class="menu-title">Create Ticket</span>
+                                        </a>
+                                    </li>
+                                    @*<li class="nav-item">
+                                        <a href="@Url.Action("SubmitterTickets", "Ticket")" class="nav-link">
+                                            <i class="ti-file menu-icon"></i>
+                                            <span class="menu-title">Submitter's Tickets</span>
+                                        </a>
+                                    </li>*@
+                                }
+                                <li class="nav-item">
+                                    <a href="@Url.Action("AllTickets", "Ticket")" class="nav-link">
+                                        <i class="ti-files menu-icon"></i>
+                                        <span class="menu-title">All Tickets</span>
+                                    </a>
+                                </li>
+
+                                @*@if (User.IsInRole("Developer"))
+                                {
+                                    <li class="nav-item">
+                                        <a href="@Url.Action("DevelopersTickets", "Ticket")" class="nav-link">
+                                            <i class="ti-file menu-icon"></i>
+                                            <span class="menu-title">Developer's Tickets</span>
+                                        </a>
+                                    </li>
+                                }*@
+                            </ul>
+                        </div>
                     </li>
                 </ul>
             </nav>
@@ -108,7 +149,7 @@
                     <div class="row">
                         <div class="col-md-12 grid-margin card">
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="card-body" >
+                                <div class="card-body">
                                     @RenderBody()
                                 </div>
                             </div>

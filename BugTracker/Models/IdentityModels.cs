@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -13,6 +14,15 @@ namespace BugTracker.Models
     {
         public virtual List<Project> Projects { get; set; }
         public string DisplayName { get; set; }
+
+        [InverseProperty(nameof(Ticket.OwnerUser))]
+        public virtual List<Ticket> CreatedTickets { get; set; }
+
+        [InverseProperty(nameof(Ticket.AssignedToUser))]
+        public virtual List<Ticket> AssignedTickets { get; set; }
+
+        public virtual List<TicketComment> Comments { get; set; }
+        public virtual List<TicketAttachment> Attachments { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
@@ -32,6 +42,12 @@ namespace BugTracker.Models
 
         public DbSet<Project> Projects { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<TicketType> TicketTypes { get; set; }
+        public DbSet<TicketStatus> TicketStatuses { get; set; }
+        public DbSet<TicketPriority> TicketPriorities { get; set; }
+        public DbSet<TicketAttachment> TicketAttachments { get; set; }
+        public DbSet<TicketComment> TicketComments { get; set; }
+        public object TicketAttachment { get; internal set; }
 
         public static ApplicationDbContext Create()
         {

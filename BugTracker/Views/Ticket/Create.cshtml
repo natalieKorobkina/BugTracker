@@ -1,0 +1,62 @@
+﻿@model CreateTicketViewModel
+@{
+    ViewBag.Title = "Create new Ticket";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+@using (Html.BeginForm("Create", "Ticket", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(m => m.Title, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Description, new { @class = "col-md-6 control-label" })
+        <div class="col-md-10">
+            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", @style = "height:200px"})
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(x => Model.ProjectId, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-5">
+            @Html.DropDownListFor(x => Model.ProjectId, new SelectList(Model.Projects, "Value", "Text"),
+           "-Select Project-", htmlAttributes: new { @class = "form-control", id = Model.ProjectId})
+
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(x => Model.TypeId, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-5">
+            @Html.DropDownListFor(x => Model.TypeId, new SelectList(Model.Types, "Value", "Text"),
+           "-Select Type-", htmlAttributes: new { @class = "form-control", id = Model.TypeId})
+
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(x => Model.PriorityId, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-5">
+            @Html.DropDownListFor(x => Model.PriorityId, new SelectList(Model.Priorities, "Value", "Text"),
+           "-Select Priority-", htmlAttributes: new { @class = "form-control", id = Model.PriorityId})
+
+        </div>
+    </div>
+    @*<div class="form-group">
+            <div class="col-md-10">
+                @Html.DropDownListFor(t => t.Priority, new SelectList(ProjectConstants.AllowedTicketPriorities),
+                                      "-Select Priority-", new { @class = "form-group" })
+            </div>
+        </div>*@
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create Ticket" class="btn btn-dark" />
+        </div>
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

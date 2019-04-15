@@ -1,0 +1,90 @@
+﻿@model TicketDetailsViewModel
+@{
+    ViewBag.Title = "Ticket Details";
+}
+
+<h2>@ViewBag.Title</h2>
+<table id="table_id" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>Project</th>
+            <th>Title</th>
+            <th>Created</th>
+            <th>Updated</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Creator</th>
+            <th>Assigned Developer</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.Project.Name</td>
+            <td>
+                @Model.Title
+            </td>
+            <td>@Model.DateCreated.ToString("dd-MM-yyyy HH:mm")</td>
+            <td>
+                @if (Model.DateUpdated != null)
+                {
+                    @Model.DateUpdated.ToString("dd-MM-yyyy HH:mm")
+                }
+            </td>
+            <td>@Model.TicketType.Name</td>
+            <td>@Model.TicketStatus.Name</td>
+            <td>@Model.TicketPriority.Name</td>
+            <td>@Model.OwnerUser.DisplayName</td>
+            <td>
+                @if (Model.AssignedToUser != null)
+                {
+                    @Model.AssignedToUser.DisplayName
+                }
+            </td>
+        </tr>
+</table>
+
+<h4>Comments:</h4>
+
+@foreach (var comment in Model.Comments)
+{
+    <div class="card">
+        @comment.User.DisplayName
+        Posted @comment.DateCreated
+        @comment.Comment
+    </div>
+}
+@if (Model.CanCreate)
+{
+    <a title="Post Comment" href="@Url.Action("CreateComment", "Comment", new { id = Model.Id })">
+        <i class="ti-comment text-primary"></i>
+    </a>
+}
+
+<h4>Attachments:</h4>
+
+@foreach (var attachment in Model.Attachments)
+{
+    <div class="card">
+        @attachment.User.DisplayName
+        @attachment.DateCreated
+        <a href="@attachment.FileUrl" target="_blank">@attachment.FileName</a>
+    </div>
+}
+
+@if (Model.CanCreate)
+{
+    <a title="Add Attachment" href="@Url.Action("CreateAttachment", "Attachment", new { id = Model.Id })">
+        <i class="ti-file text-primary"></i>
+    </a>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#table_id').DataTable();
+        });
+    </script>
+}
+
+
