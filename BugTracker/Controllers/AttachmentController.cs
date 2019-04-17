@@ -1,5 +1,6 @@
 ﻿using BugTracker.Models;
 using BugTracker.Models.Domain;
+using BugTracker.Models.Filters;
 using BugTracker.Models.ViewModels.Attachment;
 using Microsoft.AspNet.Identity;
 using System;
@@ -21,31 +22,21 @@ namespace BugTracker.Controllers
         }
         
         [HttpGet]
+        [Authorize]
+        [HasRightsCheckFilter()]
         public ActionResult CreateAttachment(int? id)
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize]
+        [HasRightsCheckFilter()]
         public ActionResult CreateAttachment(int? id, CreateAttachmentViewModel formData)
         {
             if (!ModelState.IsValid && !id.HasValue)
                 return View();
-            var currentTicket = DbContext.Tickets.Where(p => p.Id == id).FirstOrDefault();
-            var userId = User.Identity.GetUserId();
-            if (!User.IsInRole("Admin") && !User.IsInRole("ProjectManager"))
-            {
-                if (User.IsInRole("Developer") && (currentTicket.AssignedToUserId != userId))
-                {
-                    return RedirectToAction(nameof(TicketController.AllTickets));
-                }
-
-                if (User.IsInRole("Submitter") && (currentTicket.OwnerUserId != userId))
-                {
-                    return RedirectToAction(nameof(TicketController.AllTickets));
-                }
-            }
-
+            
             var attachment = new TicketAttachment();
 
             attachment.Discription = formData.Discription;
@@ -77,14 +68,13 @@ namespace BugTracker.Controllers
                 var fullPathWithName = AttachmentConstants.MappedUploadFolder + fileName;
                 //Actual save on hard disk
                 formData.Media.SaveAs(fullPathWithName);
-                //Set property with relative path for image
                 attachment.FilePath = fullPathWithName;
                 attachment.FileUrl = AttachmentConstants.UploadFolder + fileName;
             }
             DbContext.TicketAttachments.Add(attachment);
             DbContext.SaveChanges();
 
-            return RedirectToAction("AllTickets", "Ticket"); ;
+            return RedirectToAction("TicketDetails", "Ticket", new { id = attachment.TicketId}); ;
         }
     }
 }

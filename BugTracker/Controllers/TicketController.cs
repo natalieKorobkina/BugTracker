@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using BugTracker.Models;
 using BugTracker.Models.Domain;
+using BugTracker.Models.Filters;
 using BugTracker.Models.Helpers;
 using BugTracker.Models.ViewModels;
 using Microsoft.AspNet.Identity;
@@ -9,7 +10,6 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace BugTracker.Controllers
@@ -41,11 +41,7 @@ namespace BugTracker.Controllers
             if (isAdminManager)
             {
                 model = DbContext.Tickets.ProjectTo<AllTicketsViewModel>().ToList();
-
-                foreach (var ticket in model)
-                {
-                    ticket.EditAvailable = true;
-                }
+                model.ForEach(t => t.EditAvailable = true);
 
                 return View(model);
             }
@@ -53,121 +49,39 @@ namespace BugTracker.Controllers
             if (isDeveloper && isSubmitter)
             {
                 model = bugTrackerHelper.GetTicketsForDevSubmitters(userId).ProjectTo<AllTicketsViewModel>().ToList();
-
-                foreach (var ticket in model)
-                {
-                    ticket.EditAvailable = ((ticket.AssignedToUser != null) && (userId == ticket.AssignedToUser.Id)) || (userId == ticket.OwnerUser.Id);
-                }
-
+                model.ForEach(t => t.EditAvailable = bugTrackerHelper.IsAssigned(t, userId) 
+                || bugTrackerHelper.IsOwned(t, userId));
+                
                 return View(model);
             }
 
             if (isDeveloper)
             {
                 model = bugTrackerHelper.GetTicketsForDeveloper(userId).ProjectTo<AllTicketsViewModel>().ToList();
-
-                foreach (var ticket in model)
-                {
-                    ticket.EditAvailable = (ticket.AssignedToUser != null) && (userId == ticket.AssignedToUser.Id);
-                }
-
+                model.ForEach(t => t.EditAvailable = bugTrackerHelper.IsAssigned(t, userId));
+                
                 return View(model);
             }
             if (isSubmitter)
             {
                 model = bugTrackerHelper.GetTicketsForSubmitters(userId).ProjectTo<AllTicketsViewModel>().ToList();
-
-                foreach (var ticket in model)
-                {
-                    ticket.EditAvailable = true && (userId == ticket.OwnerUser.Id);
-                }
+                model.ForEach(t => t.EditAvailable = bugTrackerHelper.IsOwned(t, userId));
 
                 return View(model);
             }
             return View();
         }
 
-        //[Authorize(Roles = "Developer")]
-        //public ActionResult DevelopersTickets()
-        //{
-        //    userId = User.Identity.GetUserId();
-        //    var allIdOfUserProjects = DbContext.Users.Where(u => u.Id == userId)
-        //        .SelectMany(u => u.Projects).Select(p => p.Id).ToList();
-        //    var query = DbContext.Tickets.Where(p => allIdOfUserProjects.Contains(p.ProjectId)
-        //        || p.AssignedToUserId == userId);
-
-        //    var model = query.Select(p => new AllTicketsViewModel
-        //    {
-        //        Id = p.Id,
-        //        Project = p.Project,
-        //        Title = p.Title,
-        //        DateCreated = p.DateCreated,
-        //        DateUpdated = p.DateUpdated,
-        //        TicketType = p.TicketType,
-        //        TicketStatus = p.TicketStatus,
-        //        TicketPriority = p.TicketPriority,
-        //        OwnerUser = p.OwnerUser,
-        //        AssignedToUser = p.AssignedToUser,
-        //        //EditAvailable = true && (userId == p.AssignedToUserId)
-
-        //    }).ToList();
-
-        //    return View(model);
-        //}
-
-        //[Authorize(Roles = "Submitter")]
-        //public ActionResult SubmitterTickets()
-        //{
-        //    userId = User.Identity.GetUserId();
-        //    var allIdOfUserProjects = DbContext.Users.Where(u => u.Id == userId)
-        //        .SelectMany(u => u.Projects).Select(p => p.Id).ToList();
-
-        //    var query = DbContext.Tickets.Where(p => allIdOfUserProjects.Contains(p.ProjectId)
-        //    || p.OwnerUserId == userId);
-
-        //    var model = query.Select(p => new AllTicketsViewModel
-        //    {
-        //        Id = p.Id,
-        //        Project = p.Project,
-        //        Title = p.Title,
-        //        DateCreated = p.DateCreated,
-        //        DateUpdated = p.DateUpdated,
-        //        TicketType = p.TicketType,
-        //        TicketStatus = p.TicketStatus,
-        //        TicketPriority = p.TicketPriority,
-        //        OwnerUser = p.OwnerUser,
-        //        AssignedToUser = p.AssignedToUser
-
-        //    }).ToList();
-
-        //    return View(model);
-        //}
-
-        [Authorize(Roles = "Submitter")]
         [HttpGet]
+        [Authorize(Roles = "Submitter")]
         public ActionResult Create()
         {
             var model = new CreateTicketViewModel();
 
             userId = User.Identity.GetUserId();
-            model.Projects = bugTrackerHelper.GetUserProjectsById(userId).Select(p => new SelectListItem
-            {
-                Value = p.Id.ToString(),
-                Text = p.Name
-
-            }).ToList();
-
-            model.Types = DbContext.TicketTypes.Select(p => new SelectListItem
-            {
-                Value = p.Id.ToString(),
-                Text = p.Name
-            }).ToList();
-
-            model.Priorities = DbContext.TicketPriorities.Select(p => new SelectListItem
-            {
-                Value = p.Id.ToString(),
-                Text = p.Name
-            }).ToList();
+            model.Projects = bugTrackerHelper.GetDropDownListProjectsCreate(userId);
+            model.Types = bugTrackerHelper.GetDropDownListTypes();
+            model.Priorities = bugTrackerHelper.GetDropDownListPriorities();
 
             return View(model);
         }
@@ -177,16 +91,11 @@ namespace BugTracker.Controllers
         public ActionResult Create(CreateTicketViewModel formData)
         {
             userId = User.Identity.GetUserId();
-
             Ticket ticket = new Ticket();
-            ticket.Title = formData.Title;
-            ticket.Discription = formData.Description;
-            ticket.ProjectId = formData.ProjectId;
-            ticket.TicketTypeId = formData.TypeId;
-            ticket.TicketPriorityId = formData.PriorityId;
+
+            ticket = Mapper.Map<Ticket>(formData);
             ticket.DateCreated = DateTime.Now;
-            ticket.DateUpdated = DateTime.Now;
-            ticket.TicketStatusId = DbContext.TicketStatuses.Where(p => p.Name == "Open").Select(p => p.Id).FirstOrDefault();
+            ticket.TicketStatusId = bugTrackerHelper.GetStatusOpen();
             ticket.OwnerUserId = userId;
 
             DbContext.Tickets.Add(ticket);
@@ -196,69 +105,30 @@ namespace BugTracker.Controllers
         }
 
         [Authorize]
+        [HasRightsCheckFilter()]
         [HttpGet]
         public ActionResult Edit(int? id)
         {
             var model = new EditTicketViewModel();
 
-            if (id == null)
-                return RedirectToAction(nameof(TicketController.AllTickets));
-
             userId = User.Identity.GetUserId();
-            var currentTicket = DbContext.Tickets.Where(p => p.Id == id).FirstOrDefault();
+            
+            var currentTicket = bugTrackerHelper.GetCurrentTicketById(id.Value);
 
-            if (!userManager.IsInRole(userId, "Admin") && !userManager.IsInRole(userId, "ProjectManager"))
+            model = Mapper.Map<EditTicketViewModel>(currentTicket);
+
+            model.Projects = bugTrackerHelper.GetDropDownListProjects();
+            model.Types = bugTrackerHelper.GetDropDownListTypes();
+            model.Priorities = bugTrackerHelper.GetDropDownListPriorities();
+            
+            if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
             {
-                if (userManager.IsInRole(userId, "Developer") && (currentTicket.AssignedToUserId != userId))
-                {
-                    return RedirectToAction(nameof(TicketController.AllTickets));
-                }
-
-                if (userManager.IsInRole(userId, "Submitter") && (currentTicket.OwnerUserId != userId))
-                {
-                    return RedirectToAction(nameof(TicketController.AllTickets));
-                }
+                model.Statuses = bugTrackerHelper.GetDropDownListProjects();
+                model.Projects = bugTrackerHelper.GetDropDownListProjects();
             }
-
-
-            model.Title = currentTicket.Title;
-            model.Description = currentTicket.Discription;
-
-            model.Projects = DbContext.Projects.Select(p => new SelectListItem
+            else
             {
-                Value = p.Id.ToString(),
-                Text = p.Name
-
-            }).ToList();
-
-
-            model.Types = DbContext.TicketTypes.Select(p => new SelectListItem
-            {
-                Value = p.Id.ToString(),
-                Text = p.Name
-            }).ToList();
-
-            model.Priorities = DbContext.TicketPriorities.Select(p => new SelectListItem
-            {
-                Value = p.Id.ToString(),
-                Text = p.Name
-            }).ToList();
-
-            model.ProjectId = currentTicket.ProjectId;
-            model.TypeId = currentTicket.TicketTypeId;
-            model.PriorityId = currentTicket.TicketPriorityId;
-            model.DateCreated = currentTicket.DateCreated;
-
-            userId = User.Identity.GetUserId();
-            if (userManager.IsInRole(userId, "Admin") || userManager.IsInRole(userId, "ProjectManager"))
-            {
-                model.Statuses = DbContext.TicketStatuses.Select(p => new SelectListItem
-                {
-                    Value = p.Id.ToString(),
-                    Text = p.Name
-                }).ToList();
-
-                model.StatusId = currentTicket.TicketStatusId;
+                model.Projects = bugTrackerHelper.GetDropDownListProjectsCreate(userId);
             }
 
             return View(model);
@@ -268,9 +138,7 @@ namespace BugTracker.Controllers
         [Authorize]
         public ActionResult Edit(int? id, EditTicketViewModel formData)
         {
-            userId = User.Identity.GetUserId();
-
-            var ticket = DbContext.Tickets.Where(p => p.Id == id).FirstOrDefault();
+            var ticket = bugTrackerHelper.GetCurrentTicketById(id.Value);
 
             if (id == null || ticket == null)
             {
@@ -278,17 +146,17 @@ namespace BugTracker.Controllers
             }
 
             ticket.Title = formData.Title;
-            ticket.Discription = formData.Description;
+            ticket.Description = formData.Description;
             ticket.ProjectId = formData.ProjectId;
-            ticket.TicketTypeId = formData.TypeId;
-            ticket.TicketPriorityId = formData.PriorityId;
+            ticket.TicketTypeId = formData.TicketTypeId;
+            ticket.TicketPriorityId = formData.TicketPriorityId;
             ticket.DateUpdated = DateTime.Now;
 
             if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
             {
-                ticket.TicketStatusId = formData.StatusId;
+                ticket.TicketStatusId = formData.TicketStatusId;
             }
-
+            
             DbContext.SaveChanges();
             return RedirectToAction(nameof(TicketController.AllTickets));
         }
@@ -298,20 +166,12 @@ namespace BugTracker.Controllers
         public ActionResult TicketsAssignment(int? id)
         {
             if (id == null)
-                return RedirectToAction(nameof(HomeController.Index));
+                return RedirectToAction(nameof(TicketController.AllTickets));
 
             var model = new TicketsAssignmentViewModel();
-            var currentTicket = DbContext.Tickets.Where(p => p.Id == id).FirstOrDefault();
-            var developerRoleId = DbContext.Roles.Where(r => r.Name == "Developer").Select(p => p.Id).FirstOrDefault();
+            var currentTicket = bugTrackerHelper.GetCurrentTicketById(id.Value);
 
-            model.Developers = DbContext.Users.Where(x => x.Roles.Select(y => y.RoleId).Contains(developerRoleId))
-                .Select(p => new SelectListItem
-                {
-                    Value = p.Id.ToString(),
-                    Text = p.DisplayName
-
-                }).ToList();
-
+            model.Developers = bugTrackerHelper.GetAllDevelopers();
             model.DeveloperId = currentTicket.AssignedToUserId;
 
             return View(model);
@@ -321,68 +181,30 @@ namespace BugTracker.Controllers
         [HttpPost]
         public ActionResult TicketsAssignment(int? id, TicketsAssignmentViewModel formData)
         {
-            var ticket = DbContext.Tickets.Where(p => p.Id == id).FirstOrDefault();
-            var developer = DbContext.Users.Where(p => p.Id == formData.DeveloperId).FirstOrDefault();
+            var ticket = bugTrackerHelper.GetCurrentTicketById(id.Value);
 
             if (id == null || ticket == null)
-            {
-                return RedirectToAction(nameof(HomeController.Index));
-            }
+                return RedirectToAction(nameof(TicketController.AllTickets));
 
-
-            if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
-            {
                 ticket.AssignedToUserId = formData.DeveloperId;
-
                 DbContext.SaveChanges();
 
-                return RedirectToAction(nameof(TicketController.AllTickets));
-            }
-
-            return View();
+            return RedirectToAction(nameof(TicketController.AllTickets));
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin, ProjectManager, Developer, Submitter")]
+        [CanActFilter()]
         public ActionResult TicketDetails(int? id)
         {
-            if (id == null)
-            {
-                return RedirectToAction(nameof(TicketController.AllTickets));
-            }
-
-            userId = User.Identity.GetUserId();
-
             var ticket = DbContext.Tickets.Where(t => t.Id == id).FirstOrDefault();
-            var isSubmitter = User.IsInRole("Submitter");
-            var isDeveloper = User.IsInRole("Developer");
-            var isAdminManager = User.IsInRole("Developer") || User.IsInRole("ProjectManager");
             var model = new TicketDetailsViewModel();
 
             model = Mapper.Map<TicketDetailsViewModel>(ticket);
-
-            if (isAdminManager)
-            {
-                model.CanCreate = true;
-
-                return View(model);
-            }
-            if (isDeveloper && isSubmitter)
-            {
-                model.CanCreate = true && (userId == ticket.AssignedToUserId || userId == ticket.OwnerUserId);
-
-                return View(model);
-            }
-            if (isDeveloper)
-            {
-                model.CanCreate = true && (userId == ticket.AssignedToUserId);
-
-                return View(model);
-            }
-            model.CanCreate = true && (userId == ticket.OwnerUserId);
+            var temp = ViewData["CanCreate"];
+            model.CanCreate = (bool)ViewData["CanCreate"];
 
             return View(model);
         }
-
     }
 }

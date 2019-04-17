@@ -187,6 +187,8 @@
     <Compile Include="Controllers\AttachmentController.cs" />
     <Compile Include="Controllers\CommentController.cs" />
     <Compile Include="Controllers\TicketController.cs" />
+    <Compile Include="Models\Filters\CanActFilter.cs" />
+    <Compile Include="Models\Filters\HasRightsCheckFilter.cs" />
     <Compile Include="Models\ViewModels\Ticket\AllTicketsViewModel.cs" />
     <Compile Include="Models\ViewModels\Attachment\CreateAttachmentViewModel.cs" />
     <Compile Include="Models\ViewModels\Comment\CreateCommentViewModel.cs" />
@@ -251,6 +253,7 @@
     <Content Include="fonts\ubuntu\UFL.txt" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="images\54c98d279b9e1.jpeg" />
     <Content Include="images\logo.jpg" />
     <Content Include="js\chart.js" />
     <Content Include="js\dashboard.js" />
@@ -604,8 +607,6 @@
     <Content Include="Views\Project\EditMembers.cshtml" />
     <Content Include="Views\Ticket\Create.cshtml" />
     <Content Include="Views\Ticket\AllTickets.cshtml" />
-    <Content Include="Views\Ticket\DevelopersTickets.cshtml" />
-    <Content Include="Views\Ticket\SubmittersTickets.cshtml" />
     <Content Include="Views\Ticket\Edit.cshtml" />
     <Content Include="Views\Ticket\TicketsAssignment.cshtml" />
     <Content Include="Views\Ticket\TicketDetails.cshtml" />

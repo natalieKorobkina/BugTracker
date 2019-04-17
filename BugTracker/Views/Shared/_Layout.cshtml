@@ -26,13 +26,21 @@
         <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
                 <div class="navbar-brand brand-logo mr-5" href="index.html">
-                    <img src="~/images/logo.jpg" alt="logo" />
+                    <img src="~/images/54c98d279b9e1.jpeg" alt="logo" />
                 </div>
             </div>
-            <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+            <div class="navbar-menu-wrapper d-flex align-items-center justify-content-between">
                 <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                     <span class="ti-view-list"></span>
                 </button>
+                <ul class="navbar-nav mr-lg-2">
+                    <li class="nav-item nav-search d-none d-lg-block">
+                        
+                                <span class="input-group-text" id="search">
+                                    Ticketing System for Your Project
+                                </span>
+                    </li>
+                </ul>
                 <ul class="navbar-nav navbar-nav-right">
                     <li class="nav-item nav-profile dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
@@ -112,33 +120,17 @@
                                 {
                                     <li class="nav-item">
                                         <a href="@Url.Action("Create", "Ticket")" class="nav-link">
-                                            <i class="ti-plus menu-icon"></i>
+                                            <i class="ti-ticket menu-icon"></i>
                                             <span class="menu-title">Create Ticket</span>
                                         </a>
-                                    </li>
-                                    @*<li class="nav-item">
-                                        <a href="@Url.Action("SubmitterTickets", "Ticket")" class="nav-link">
-                                            <i class="ti-file menu-icon"></i>
-                                            <span class="menu-title">Submitter's Tickets</span>
-                                        </a>
-                                    </li>*@
+                                    </li >
                                 }
-                                <li class="nav-item">
+                                <li class="nav-item ">
                                     <a href="@Url.Action("AllTickets", "Ticket")" class="nav-link">
                                         <i class="ti-files menu-icon"></i>
                                         <span class="menu-title">All Tickets</span>
                                     </a>
                                 </li>
-
-                                @*@if (User.IsInRole("Developer"))
-                                {
-                                    <li class="nav-item">
-                                        <a href="@Url.Action("DevelopersTickets", "Ticket")" class="nav-link">
-                                            <i class="ti-file menu-icon"></i>
-                                            <span class="menu-title">Developer's Tickets</span>
-                                        </a>
-                                    </li>
-                                }*@
                             </ul>
                         </div>
                     </li>

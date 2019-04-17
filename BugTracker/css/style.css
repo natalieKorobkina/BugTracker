@@ -11907,7 +11907,7 @@ input[type="button"].btn-block {
   align-items: center;
   padding: 0.875rem 1.375rem;
   margin-bottom: 0;
-  font-size: 0.875rem;
+  font-size: 20px;
   font-weight: 400;
   line-height: 1;
   color: #495057;
@@ -11915,7 +11915,7 @@ input[type="button"].btn-block {
   white-space: nowrap;
   background-color: #e9ecef;
   border: 1px solid #ced4da;
-  border-radius: 2px;
+  border-radius: 5px;
 }
 
 .input-group-text input[type="radio"],
@@ -20625,17 +20625,17 @@ dl li {
 
 /* Sidebar */
 .sidebar {
-  min-height: calc(100vh - 70px);
-  background: #dddce1;
-  font-family: "Roboto", sans-serif;
-  font-weight: 500;
-  padding: 0;
-  width: 237px;
-  z-index: 11;
-  transition: width 0.25s ease, background 0.25s ease;
-  -webkit-transition: width 0.25s ease, background 0.25s ease;
-  -moz-transition: width 0.25s ease, background 0.25s ease;
-  -ms-transition: width 0.25s ease, background 0.25s ease;
+    min-height: calc(100vh - 70px);
+    background: #dddce1;
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 900;
+    padding: 0;
+    width: 237px;
+    z-index: 11;
+    transition: width 0.25s ease, background 0.25s ease;
+    -webkit-transition: width 0.25s ease, background 0.25s ease;
+    -moz-transition: width 0.25s ease, background 0.25s ease;
+    -ms-transition: width 0.25s ease, background 0.25s ease;
 }
 
 .sidebar .nav {
@@ -20813,7 +20813,6 @@ dl li {
   position: absolute;
   margin-top: 16px;
   border-radius: 50%;
-  background: #b2b2b2;
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link {
@@ -20894,13 +20893,14 @@ dl li {
   color: #1b2658;
 }
 
-.navbar .navbar-brand-wrapper .navbar-brand img {
-  width: calc(237px - 130px);
-  max-width: 100%;
-  height: 34px;
-  margin: auto;
-  vertical-align: middle;
-}
+    .navbar .navbar-brand-wrapper .navbar-brand img {
+        width: calc(245px - 130px);
+        max-width: 100%;
+        height: 64px;
+        margin: auto;
+        vertical-align: middle;
+        border: 1px solid lightgrey
+    }
 
 .navbar .navbar-brand-wrapper .brand-logo-mini {
   padding-left: 0;

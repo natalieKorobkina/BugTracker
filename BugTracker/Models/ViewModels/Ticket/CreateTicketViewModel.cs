@@ -21,11 +21,11 @@ namespace BugTracker.Models.ViewModels
         public IEnumerable<SelectListItem> Projects { get; set; }
 
         [Required(ErrorMessage = "Please, enter ticket's type.")]
-        public int TypeId { get; set; }
+        public int TicketTypeId { get; set; }
         public IEnumerable<SelectListItem> Types { get; set; }
 
         [Required(ErrorMessage = "Please, enter ticket's priority.")]
-        public int PriorityId { get; set; }
+        public int TicketPriorityId { get; set; }
         public IEnumerable<SelectListItem> Priorities { get; set; }
     }
 }

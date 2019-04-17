@@ -12,7 +12,7 @@ namespace BugTracker.Models.ViewModels
         public Project Project { get; set; }
         public string Title { get; set; }
         public DateTime DateCreated { get; set; }
-        public DateTime DateUpdated { get; set; }
+        public DateTime? DateUpdated { get; set; }
         public TicketType TicketType { get; set; }
         public TicketStatus TicketStatus { get; set; }
         public TicketPriority TicketPriority { get; set; }

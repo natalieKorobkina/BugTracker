@@ -15,6 +15,9 @@ namespace BugTracker.App_Start
             Mapper.Initialize(cfg => {
                 cfg.CreateMap<Ticket, TicketDetailsViewModel>();
                 cfg.CreateMap<Ticket, AllTicketsViewModel>();
+                cfg.CreateMap<CreateTicketViewModel, Ticket>();
+                cfg.CreateMap<Ticket, EditTicketViewModel>();
+                cfg.CreateMap<EditTicketViewModel, Ticket>();
             });
 
         }

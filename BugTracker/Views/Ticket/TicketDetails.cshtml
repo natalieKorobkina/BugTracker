@@ -3,8 +3,8 @@
     ViewBag.Title = "Ticket Details";
 }
 
-<h2>@ViewBag.Title</h2>
-<table id="table_id" class="display" style="width:100%">
+<h3>@ViewBag.Title</h3>
+<table id="table_id" class="table-striped table-bordered compact" style="width:100%">
     <thead>
         <tr>
             <th>Project</th>
@@ -28,7 +28,7 @@
             <td>
                 @if (Model.DateUpdated != null)
                 {
-                    @Model.DateUpdated.ToString("dd-MM-yyyy HH:mm")
+                    @Model.DateUpdated.Value.ToString("dd-MM-yyyy HH:mm")
                 }
             </td>
             <td>@Model.TicketType.Name</td>
@@ -43,41 +43,77 @@
             </td>
         </tr>
 </table>
-
-<h4>Comments:</h4>
-
-@foreach (var comment in Model.Comments)
-{
-    <div class="card">
-        @comment.User.DisplayName
-        Posted @comment.DateCreated
-        @comment.Comment
+<br />
+<h4>Description:</h4>
+<div class="row">
+    <div class="card col-md-12" >
+        <div class="grid-margin card-body">
+            @Model.Description
+        </div>
     </div>
-}
-@if (Model.CanCreate)
-{
-    <a title="Post Comment" href="@Url.Action("CreateComment", "Comment", new { id = Model.Id })">
-        <i class="ti-comment text-primary"></i>
-    </a>
-}
+</div>
+<br />
+<div class="row" style="display:flex;">
+    <div class="col-md-6" style="width:100%">
+        <h4>Comments:</h4>
 
-<h4>Attachments:</h4>
-
-@foreach (var attachment in Model.Attachments)
-{
-    <div class="card">
-        @attachment.User.DisplayName
-        @attachment.DateCreated
-        <a href="@attachment.FileUrl" target="_blank">@attachment.FileName</a>
+        @foreach (var comment in Model.Comments)
+        {
+            <div class="grid-margin stretch-card">
+                <div class=" card">
+                    <div class="card-body">
+                        @comment.User.DisplayName
+                        <i class="ti-alarm-clock menu-icon"></i> @comment.DateCreated.ToString("dd-MM-yyyy HH:mm")
+                        <hr />
+                        <div style="color:dimgray">
+                            @comment.Comment
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
-}
+    <div class="col-md-6" style="width:100%">
+        <h4>Attachments:</h4>
 
-@if (Model.CanCreate)
-{
-    <a title="Add Attachment" href="@Url.Action("CreateAttachment", "Attachment", new { id = Model.Id })">
-        <i class="ti-file text-primary"></i>
-    </a>
-}
+        @foreach (var attachment in Model.Attachments)
+        {
+            <div class="grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        @attachment.User.DisplayName
+                        <i class="ti-alarm-clock menu-icon"></i> @attachment.DateCreated.ToString("dd-MM-yyyy HH:mm")
+                        <hr />
+                        <div style="color:dimgray">
+                            <a href="@attachment.FileUrl" target="_blank">@attachment.FileName</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div style="display:flex;">
+    <div style="width:100%">
+        @if (Model.CanCreate)
+        {
+            <a title="Post Comment" href="@Url.Action("CreateComment", "Comment", new { id = Model.Id })">
+                <i class="ti-comment text-primary"></i>
+                Add Comment
+            </a>
+        }
+    </div>
+    <div style="width:100%">
+        @if (Model.CanCreate)
+        {
+            <a title="Add Attachment" href="@Url.Action("CreateAttachment", "Attachment", new { id = Model.Id })">
+                <i class="ti-file text-primary"></i>
+                Add Attachment
+            </a>
+        }
+    </div>
+
+</div>
 
 @section scripts {
     <script type="text/javascript">
@@ -86,5 +122,3 @@
         });
     </script>
 }
-
-
