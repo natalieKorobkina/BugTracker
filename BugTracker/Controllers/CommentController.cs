@@ -33,6 +33,9 @@ namespace BugTracker.Controllers
         [HasRightsCheckFilter()]
         public ActionResult CreateComment(int? id, CreateCommentViewModel formData)
         {
+            if (!ModelState.IsValid || !id.HasValue)
+                return RedirectToAction(nameof(TicketController.AllTickets));
+
             TicketComment comment  = new TicketComment();
             comment.Comment = formData.Comment;
             comment.DateCreated = DateTime.Now;

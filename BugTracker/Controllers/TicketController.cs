@@ -79,7 +79,7 @@ namespace BugTracker.Controllers
             var model = new CreateTicketViewModel();
 
             userId = User.Identity.GetUserId();
-            model.Projects = bugTrackerHelper.GetDropDownListProjectsCreate(userId);
+            model.Projects = bugTrackerHelper.GetDropDownListUsersProjects(userId);
             model.Types = bugTrackerHelper.GetDropDownListTypes();
             model.Priorities = bugTrackerHelper.GetDropDownListPriorities();
 
@@ -90,6 +90,9 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Submitter")]
         public ActionResult Create(CreateTicketViewModel formData)
         {
+            if (!ModelState.IsValid)
+                return View();
+
             userId = User.Identity.GetUserId();
             Ticket ticket = new Ticket();
 
@@ -117,18 +120,18 @@ namespace BugTracker.Controllers
 
             model = Mapper.Map<EditTicketViewModel>(currentTicket);
 
-            model.Projects = bugTrackerHelper.GetDropDownListProjects();
+            //model.Projects = bugTrackerHelper.GetDropDownListProjects();
             model.Types = bugTrackerHelper.GetDropDownListTypes();
             model.Priorities = bugTrackerHelper.GetDropDownListPriorities();
             
             if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
             {
-                model.Statuses = bugTrackerHelper.GetDropDownListProjects();
+                model.Statuses = bugTrackerHelper.GetDropDownListStatuses();
                 model.Projects = bugTrackerHelper.GetDropDownListProjects();
             }
             else
             {
-                model.Projects = bugTrackerHelper.GetDropDownListProjectsCreate(userId);
+                model.Projects = bugTrackerHelper.GetDropDownListUsersProjectsEdit(userId, currentTicket.ProjectId);
             }
 
             return View(model);
@@ -136,13 +139,14 @@ namespace BugTracker.Controllers
 
         [HttpPost]
         [Authorize]
+        [HasRightsCheckFilter()]
         public ActionResult Edit(int? id, EditTicketViewModel formData)
         {
             var ticket = bugTrackerHelper.GetCurrentTicketById(id.Value);
 
-            if (id == null || ticket == null)
+            if (!ModelState.IsValid || id == null || ticket == null)
             {
-                return RedirectToAction(nameof(HomeController.Index));
+                return RedirectToAction(nameof(TicketController.AllTickets));
             }
 
             ticket.Title = formData.Title;

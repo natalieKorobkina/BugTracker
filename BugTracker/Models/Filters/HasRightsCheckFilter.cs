@@ -23,7 +23,7 @@ namespace BugTracker.Models.Filters
 
             if (string.IsNullOrEmpty(actionParamentr))
             {
-                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary { { "controller", "Account" }, { "action", "Login" } });
+                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary { { "controller", "Ticket" }, { "action", "AllTickets" } });
             }
 
             int ticketId = Convert.ToInt32(actionParamentr);
@@ -34,13 +34,20 @@ namespace BugTracker.Models.Filters
                 || HttpContext.Current.User.IsInRole("ProjectManager");
             var ticket = DbContext.Tickets.Where(p => p.Id == ticketId).FirstOrDefault();
 
+            
             if (!isAdminManager)
             {
                 if (isDeveloper && (ticket.AssignedToUserId != userId))
-                    filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary{{ "controller", "Account" }, { "action", "Login" }});
+                    filterContext.Result = new ViewResult()
+                    {
+                        ViewName = "AutorizationError"
+                    };
 
                 if (isSubmitter && (ticket.OwnerUserId != userId))
-                    filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary { { "controller", "Account" }, { "action", "Login" } });
+                    filterContext.Result = new ViewResult()
+                    {
+                        ViewName = "AutorizationError"
+                    };
             }
         }
     }

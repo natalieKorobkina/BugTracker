@@ -29,7 +29,7 @@ namespace BugTracker.Models.Filters
             var isAdminManager = HttpContext.Current.User.IsInRole("Admin")
                 || HttpContext.Current.User.IsInRole("ProjectManager");
             var ticket = DbContext.Tickets.Where(p => p.Id == ticketId).FirstOrDefault();
-            bool canCreate;
+            bool canCreate = false;
 
             if (isDeveloper && isSubmitter)
             {
@@ -43,7 +43,7 @@ namespace BugTracker.Models.Filters
             {
                 canCreate = userId == ticket.OwnerUserId;
             }
-            else
+            if(isAdminManager)
             {
                 canCreate = true;
             }

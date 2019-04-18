@@ -22,21 +22,21 @@
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(x => Model.ProjectId, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.Label("Project", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-5">
             @Html.DropDownListFor(x => Model.ProjectId, new SelectList(Model.Projects, "Value", "Text"),
            "-Select Project-", htmlAttributes: new { @class = "form-control", id = Model.ProjectId})
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(x => Model.TicketTypeId, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.Label("Ticket Type", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-5">
             @Html.DropDownListFor(x => Model.TicketTypeId, new SelectList(Model.Types, "Value", "Text"),
            "-Select Type-", htmlAttributes: new { @class = "form-control", id = Model.TicketTypeId})
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(x => Model.TicketPriorityId, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.Label("Ticket Priority", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-5">
             @Html.DropDownListFor(x => Model.TicketPriorityId, new SelectList(Model.Priorities, "Value", "Text"),
            "-Select Priority-", htmlAttributes: new { @class = "form-control", id = Model.TicketPriorityId})

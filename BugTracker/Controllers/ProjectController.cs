@@ -25,7 +25,7 @@ namespace BugTracker.Controllers
             bugTrackerHelper = new BugTrackerHelper(DbContext);
         }
 
-        [Authorize(Roles = "Admin, Moderator")]
+        [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult AllProjects()
         {
             var model = DbContext.Projects.Select(p => new AllProjectsViewModel
@@ -58,6 +58,7 @@ namespace BugTracker.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult EditMembers(int id)
         {
             var usersInProject = bugTrackerHelper.GetProjectUsersById(id);
@@ -84,19 +85,19 @@ namespace BugTracker.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "Admin, Moderator")]
+        [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult AddUser (int? projectId, string userId)
         {
             return ManageUser(projectId, userId, true);
         }
 
-        [Authorize(Roles = "Admin, Moderator")]
+        [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult RemoveMember(int? projectId, string userId)
         {
             return ManageUser(projectId, userId, false);
         }
 
-        public ActionResult ManageUser(int? projectId, string userId, bool add)
+        private ActionResult ManageUser(int? projectId, string userId, bool add)
         {
             if (projectId == null)
                 return RedirectToAction(nameof(ProjectController.AllProjects));

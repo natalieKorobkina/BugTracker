@@ -187,8 +187,10 @@
     <Compile Include="Controllers\AttachmentController.cs" />
     <Compile Include="Controllers\CommentController.cs" />
     <Compile Include="Controllers\TicketController.cs" />
+    <Compile Include="Models\ExceptionLog.cs" />
     <Compile Include="Models\Filters\CanActFilter.cs" />
     <Compile Include="Models\Filters\HasRightsCheckFilter.cs" />
+    <Compile Include="Models\Filters\LogExceptionFilter.cs" />
     <Compile Include="Models\ViewModels\Ticket\AllTicketsViewModel.cs" />
     <Compile Include="Models\ViewModels\Attachment\CreateAttachmentViewModel.cs" />
     <Compile Include="Models\ViewModels\Comment\CreateCommentViewModel.cs" />
@@ -614,6 +616,7 @@
     <Content Include="Scripts\tinymce\skins\ui\oxide\fonts\tinymce-mobile.woff" />
     <Content Include="Scripts\tinymce\langs\readme.md" />
     <Content Include="Views\Attachment\CreateAttachment.cshtml" />
+    <Content Include="Views\Shared\AutorizationError.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

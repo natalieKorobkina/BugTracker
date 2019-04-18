@@ -35,10 +35,7 @@
                 </button>
                 <ul class="navbar-nav mr-lg-2">
                     <li class="nav-item nav-search d-none d-lg-block">
-                        
-                                <span class="input-group-text" id="search">
-                                    Ticketing System for Your Project
-                                </span>
+                            Ticketing System for Your Project
                     </li>
                 </ul>
                 <ul class="navbar-nav navbar-nav-right">
@@ -95,7 +92,9 @@
                                 <span class="menu-title">Users Manager</span>
                             </a>
                         </li>
-
+                    }
+                    @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
+                    { 
                         <li class="nav-item">
                             <a href="@Url.Action("AllProjects", "Project")" class="nav-link">
                                 <i class="ti-layers-alt menu-icon"></i>
@@ -123,7 +122,7 @@
                                             <i class="ti-ticket menu-icon"></i>
                                             <span class="menu-title">Create Ticket</span>
                                         </a>
-                                    </li >
+                                    </li>
                                 }
                                 <li class="nav-item ">
                                     <a href="@Url.Action("AllTickets", "Ticket")" class="nav-link">

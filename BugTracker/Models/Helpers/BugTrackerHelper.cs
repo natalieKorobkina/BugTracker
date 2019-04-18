@@ -123,9 +123,23 @@ namespace BugTracker.Models.Helpers
             return DbContext.Projects.Select(p => new SelectListItem { Value = p.Id.ToString(), Text = p.Name }).ToList();
         }
 
-        public IEnumerable<SelectListItem> GetDropDownListProjectsCreate(string usedId)
+        public IEnumerable<SelectListItem> GetDropDownListUsersProjects(string usedId)
         {
             var userProjectsById = GetUserProjectsById(usedId);
+
+            return userProjectsById.Select(p => new SelectListItem { Value = p.Id.ToString(), Text = p.Name }).ToList();
+        }
+
+        public IEnumerable<SelectListItem> GetDropDownListUsersProjectsEdit(string usedId, int ticketProjectId)
+        {
+            //List with project id from current ticket, in case if user not assigned to ticket's project but assigned to that ticket
+            var userProjectsById = GetUserProjectsById(usedId);
+            var isInList = userProjectsById.Where(p => p.Id == ticketProjectId).Select(p => p).Any();
+            if (!isInList)
+            {
+                var currentTicketProject = DbContext.Projects.Where(p => p.Id == ticketProjectId).FirstOrDefault();
+                userProjectsById.Add(currentTicketProject);
+            }
 
             return userProjectsById.Select(p => new SelectListItem { Value = p.Id.ToString(), Text = p.Name }).ToList();
         }
@@ -161,33 +175,5 @@ namespace BugTracker.Models.Helpers
         {
             return DbContext.TicketStatuses.Where(p => p.Name == "Open").Select(p => p.Id).FirstOrDefault();
         }
-        
-        //public bool CheckIfHasRight(bool isDeveloper, bool isSubmitter, bool isAdminManager, Ticket ticket, string userId)
-        //{
-        //    if (!isAdminManager)
-        //    {
-        //        if (isDeveloper && (ticket.AssignedToUserId != userId))
-        //            return true;
-
-        //        if (isSubmitter && (ticket.OwnerUserId != userId))
-        //            return true;
-        //    }
-
-        //    return false;
-        //}
-
-        //public bool UserCanCreate(bool isDeveloper, bool isSubmitter, bool isAdminManager, Ticket ticket, string userId)
-        //{
-        //    if (isAdminManager)
-        //        return true;
-
-        //    if (isDeveloper && isSubmitter)
-        //        return (userId == ticket.AssignedToUserId || userId == ticket.OwnerUserId);
-
-        //    if (isDeveloper)
-        //        return userId == ticket.AssignedToUserId;
-
-        //    return userId == ticket.OwnerUserId;
-        //}
     }
 }

@@ -34,12 +34,18 @@ namespace BugTracker.Controllers
         [HasRightsCheckFilter()]
         public ActionResult CreateAttachment(int? id, CreateAttachmentViewModel formData)
         {
-            if (!ModelState.IsValid && !id.HasValue)
+            if (formData.Media == null)
+            {
+                ModelState.AddModelError("FileURL", "Please upload file");
                 return View();
-            
-            var attachment = new TicketAttachment();
+            }
 
-            attachment.Discription = formData.Discription;
+            if (!ModelState.IsValid || !id.HasValue)
+                return RedirectToAction("AllTickets", "Ticket");
+
+            TicketAttachment attachment = new TicketAttachment();
+
+            attachment.Description = formData.Description;
             attachment.DateCreated = DateTime.Now;
             attachment.TicketId = id.Value;
             attachment.UserId = User.Identity.GetUserId();
