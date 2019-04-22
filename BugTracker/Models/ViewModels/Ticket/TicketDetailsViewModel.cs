@@ -20,9 +20,21 @@ namespace BugTracker.Models.ViewModels
         public TicketStatus TicketStatus { get; set; }
         public ApplicationUser OwnerUser { get; set; }
         public ApplicationUser AssignedToUser { get; set; }
-        public List<TicketAttachment> Attachments { get; set; }
-        public List<TicketComment> Comments { get; set; }
+        public List<AttachmentForList> TicketAttachments { get; set; }
+        public List<CommentForList> TicketComments { get; set; }
 
         public bool CanCreate { get; set; }
+    }
+
+    public class AttachmentForList
+    {
+        public TicketAttachment TicketAttachment { get; set; }
+        public bool CanEdit { get; set; }
+    }
+
+    public class CommentForList
+    {
+        public TicketComment TicketComment { get; set; }
+        public bool CanEdit { get; set; }
     }
 }

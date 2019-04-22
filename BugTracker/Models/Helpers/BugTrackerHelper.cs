@@ -9,6 +9,7 @@ using System.Web;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity;
 using System.Web.Mvc;
+using BugTracker.Models.ViewModels;
 
 namespace BugTracker.Models.Helpers
 {
@@ -92,10 +93,6 @@ namespace BugTracker.Models.Helpers
 
         public IQueryable<Ticket> GetTicketsForDevSubmitters(string userId)
         {
-            //DbContext.Tickets.Where(p => (isAdmin) ||
-            //(isDeveloper && p.AssignedToUserId == userId) ||
-            //(isSub && p.))
-
             //Tickets of all assigned projects and tickets they are assigned and owned
             var allIdOfUserProjects = AllIdOfUserProjects(userId);
 
@@ -116,6 +113,16 @@ namespace BugTracker.Models.Helpers
         public Ticket GetCurrentTicketById(int id)
         {
             return DbContext.Tickets.Where(p => p.Id == id).FirstOrDefault();
+        }
+
+        public TicketAttachment GetAttachmentById(int? id)
+        {
+            return DbContext.TicketAttachments.Where(a => a.Id == id.Value).Select(a => a).FirstOrDefault();
+        }
+
+        public TicketComment GetCommentById(int? id)
+        {
+            return DbContext.TicketComments.FirstOrDefault(c => c.Id == id.Value);
         }
 
         public IEnumerable<SelectListItem> GetDropDownListProjects() 
@@ -174,6 +181,35 @@ namespace BugTracker.Models.Helpers
         public int GetStatusOpen()
         {
             return DbContext.TicketStatuses.Where(p => p.Name == "Open").Select(p => p.Id).FirstOrDefault();
+        }
+
+        public string GetUserId()
+        {
+            return HttpContext.Current.User.Identity.GetUserId();
+        }
+
+        public bool CheckIfUserAdminManager()
+        {
+            return HttpContext.Current.User.IsInRole("Admin")
+                || HttpContext.Current.User.IsInRole("ProjectManager");
+        }
+
+        public List<AttachmentForList> GetListAttachments( Ticket ticket)
+        {
+            return ticket.Attachments.Select(p => new AttachmentForList
+            {
+                TicketAttachment = p,
+                CanEdit = CheckIfUserAdminManager() || (p.UserId == GetUserId())
+            }).ToList();
+        }
+
+        public List<CommentForList> GetListComments(Ticket ticket)
+        {
+            return ticket.Comments.Select(p => new CommentForList
+            {
+                TicketComment = p,
+                CanEdit = CheckIfUserAdminManager() || (p.UserId == GetUserId())
+            }).ToList();
         }
     }
 }

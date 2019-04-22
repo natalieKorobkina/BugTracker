@@ -1,0 +1,5 @@
++ Blog - 3-rd party autorization
+- add readme
++ Portfolio - add blog
++ add readme
++ edit resume

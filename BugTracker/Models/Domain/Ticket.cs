@@ -34,6 +34,6 @@ namespace BugTracker.Models.Domain
         public virtual List<TicketAttachment> Attachments { get; set; }
         public virtual List<TicketComment> Comments { get; set; }
         public virtual List<TicketHistory> Histories { get; set; }
-        public virtual List<TicketNotification> Notofications { get; set; }
+        public virtual List<TicketNotification> Notifications { get; set; }
     }
 }

@@ -6,7 +6,7 @@ using System.Web;
 
 namespace BugTracker.Models.ViewModels
 {
-    public class CreateCommentViewModel
+    public class CreateEditCommentViewModel
     {
         [Required(ErrorMessage = "Please, enter comment.")]
         public string Comment { get; set; }

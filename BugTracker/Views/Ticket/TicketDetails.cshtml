@@ -4,6 +4,11 @@
 }
 
 <h3>@ViewBag.Title</h3>
+<div>
+    <a title="Show Ticket History" href="@Url.Action("ShowHistory", "History", new {id = Model.Id})">
+        <i class="ti-pencil-alt btn-dark"></i> History
+    </a>
+</div>
 <table id="table_id" class="table-striped table-bordered compact" style="width:100%">
     <thead>
         <tr>
@@ -46,7 +51,7 @@
 <br />
 <h4>Description:</h4>
 <div class="row">
-    <div class="card col-md-12" >
+    <div class="card col-md-12">
         <div class="grid-margin card-body">
             @Model.Description
         </div>
@@ -57,17 +62,32 @@
     <div class="col-md-6" style="width:100%">
         <h4>Comments:</h4>
 
-        @foreach (var comment in Model.Comments)
+        @foreach (var comment in Model.TicketComments)
         {
             <div class="grid-margin stretch-card">
                 <div class=" card">
                     <div class="card-body">
-                        @comment.User.DisplayName
-                        <i class="ti-alarm-clock menu-icon"></i> @comment.DateCreated.ToString("dd-MM-yyyy HH:mm")
+                        @comment.TicketComment.User.DisplayName
+                        <i class="ti-alarm-clock menu-icon"></i> @comment.TicketComment.DateCreated.ToString("dd-MM-yyyy HH:mm")
                         <hr />
                         <div style="color:dimgray">
-                            @comment.Comment
+                            @comment.TicketComment.Comment
                         </div>
+                        @if (comment.CanEdit)
+                        {
+                            <div style="display: flex; justify-content:space-between;">
+                                <div>
+                                    <a title="Edit Comment" style="color:black" href="@Url.Action("EditComment", "Comment", new {id = Model.Id, commentId = comment.TicketComment.Id })">
+                                        <i class="ti-pencil-alt"></i> Edit
+                                    </a>
+                                </div>
+                                <div>
+                                    <form method="post" action="@Url.Action("Delete", "Comment", new { id = Model.Id, commentId = comment.TicketComment.Id })">
+                                        <a href="#" title="Delete Comment" style="color:black" class="actionDelete"> <i class="ti-trash"></i> Delete</a>
+                                    </form>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -76,17 +96,35 @@
     <div class="col-md-6" style="width:100%">
         <h4>Attachments:</h4>
 
-        @foreach (var attachment in Model.Attachments)
+        @foreach (var attachment in Model.TicketAttachments)
         {
             <div class="grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        @attachment.User.DisplayName
-                        <i class="ti-alarm-clock menu-icon"></i> @attachment.DateCreated.ToString("dd-MM-yyyy HH:mm")
+                        @attachment.TicketAttachment.User.DisplayName
+                        <i class="ti-alarm-clock menu-icon"></i> @attachment.TicketAttachment.DateCreated.ToString("dd-MM-yyyy HH:mm")
                         <hr />
                         <div style="color:dimgray">
-                            <a href="@attachment.FileUrl" target="_blank">@attachment.FileName</a>
+                            @attachment.TicketAttachment.Description
                         </div>
+                        <div style="color:dimgray">
+                            <a href="@attachment.TicketAttachment.FileUrl" target="_blank">@attachment.TicketAttachment.FileName</a>
+                        </div>
+                        @if (attachment.CanEdit)
+                        {
+                            <div style="display: flex; justify-content:space-between;">
+                                <div>
+                                    <a title="Edit Attachment" style="color:black" href="@Url.Action("EditAttachment", "Attachment", new {id = Model.Id, attachmentId = attachment.TicketAttachment.Id })">
+                                        <i class="ti-pencil-alt"></i> Edit
+                                    </a>
+                                </div>
+                                <div>
+                                    <form method="post" action="@Url.Action("Delete", "Attachment", new { id = Model.Id, attachmentId = attachment.TicketAttachment.Id })">
+                                        <a href="#" title="Delete Attachment" style="color:black" class="actionDelete"> <i class="ti-trash"></i> Delete</a>
+                                    </form>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -114,11 +152,11 @@
     </div>
 
 </div>
-
 @section scripts {
     <script type="text/javascript">
         $(document).ready(function () {
             $('#table_id').DataTable();
         });
     </script>
+    <script src="~/Scripts/scriptAction.js" type="text/javascript"></script>
 }

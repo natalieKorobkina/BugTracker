@@ -23,6 +23,8 @@ namespace BugTracker.Models
 
         public virtual List<TicketComment> Comments { get; set; }
         public virtual List<TicketAttachment> Attachments { get; set; }
+        public virtual List<TicketHistory> Histories { get; set; }
+        public virtual List<TicketNotification> Notifications { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {

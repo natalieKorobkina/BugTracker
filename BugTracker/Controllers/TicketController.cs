@@ -120,7 +120,6 @@ namespace BugTracker.Controllers
 
             model = Mapper.Map<EditTicketViewModel>(currentTicket);
 
-            //model.Projects = bugTrackerHelper.GetDropDownListProjects();
             model.Types = bugTrackerHelper.GetDropDownListTypes();
             model.Priorities = bugTrackerHelper.GetDropDownListPriorities();
             
@@ -207,6 +206,9 @@ namespace BugTracker.Controllers
             model = Mapper.Map<TicketDetailsViewModel>(ticket);
             var temp = ViewData["CanCreate"];
             model.CanCreate = (bool)ViewData["CanCreate"];
+
+            model.TicketAttachments = bugTrackerHelper.GetListAttachments(ticket);
+            model.TicketComments = bugTrackerHelper.GetListComments(ticket);
 
             return View(model);
         }

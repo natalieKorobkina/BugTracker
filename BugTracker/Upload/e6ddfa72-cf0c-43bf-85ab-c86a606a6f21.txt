@@ -1,0 +1,10 @@
+https://blog-asp-mvc.azurewebsites.net/
+https://portfolio-mvc.azurewebsites.net
+
+
+https://mymvcblog.azurewebsites.net/
+mvc-blog.azurewebsites.net
+
+
+
+https://github.com/go2ismail/Asp.Net-User-Role-Membership-Example

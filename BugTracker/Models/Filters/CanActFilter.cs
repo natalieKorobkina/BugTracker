@@ -15,14 +15,15 @@ namespace BugTracker.Models.Filters
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             base.OnActionExecuting(filterContext);
-            var actionParamentr = filterContext.ActionParameters.SingleOrDefault(p => p.Key == "id").Value.ToString();
+            var actionParameter = filterContext.ActionParameters.SingleOrDefault(p => p.Key == "id").Value.ToString();
 
-            if (string.IsNullOrEmpty(actionParamentr))
+            if (string.IsNullOrEmpty(actionParameter))
             {
-                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary { { "controller", "Ticket" }, { "action", "AllTickets" } });
+                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary {
+                    { "controller", "Ticket" }, { "action", "AllTickets" } });
             }
 
-            int ticketId = Convert.ToInt32(actionParamentr);
+            int ticketId = Convert.ToInt32(actionParameter);
             var userId = HttpContext.Current.User.Identity.GetUserId();
             var isSubmitter = HttpContext.Current.User.IsInRole("Submitter");
             var isDeveloper = HttpContext.Current.User.IsInRole("Developer");

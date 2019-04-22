@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BugTracker.Models.Domain;
 using BugTracker.Models.ViewModels;
+using BugTracker.Models.ViewModels.Attachment;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,8 @@ namespace BugTracker.App_Start
                 cfg.CreateMap<CreateTicketViewModel, Ticket>();
                 cfg.CreateMap<Ticket, EditTicketViewModel>();
                 cfg.CreateMap<EditTicketViewModel, Ticket>();
+                cfg.CreateMap<TicketAttachment, CreateEditAttachmentViewModel>();
+                cfg.CreateMap<TicketComment, CreateEditCommentViewModel>();
             });
 
         }
