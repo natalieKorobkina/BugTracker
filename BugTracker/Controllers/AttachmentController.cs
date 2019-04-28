@@ -15,11 +15,13 @@ namespace BugTracker.Controllers
     {
         private ApplicationDbContext DbContext;
         private BugTrackerHelper bugTrackerHelper;
+        private NotificationHelper notificationHelper;
 
         public AttachmentController()
         {
             DbContext = new ApplicationDbContext();
             bugTrackerHelper = new BugTrackerHelper(DbContext);
+            notificationHelper = new NotificationHelper(DbContext);
         }
         
         [HttpGet]
@@ -71,6 +73,8 @@ namespace BugTracker.Controllers
                 return RedirectToAction("AllTickets", "Ticket");
 
             TicketAttachment attachment = new TicketAttachment();
+            var ticket = bugTrackerHelper.GetCurrentTicketById(id.Value);
+            var message = notificationHelper.CreateAttachmentNotification(ticket.Title);
 
             if (attachmentId == null)
             {
@@ -78,6 +82,7 @@ namespace BugTracker.Controllers
                 attachment.TicketId = id.Value;
                 attachment.UserId = User.Identity.GetUserId();
                 DbContext.TicketAttachments.Add(attachment);
+                notificationHelper.SendNotification(ticket, message, false);
             }
             else
             {

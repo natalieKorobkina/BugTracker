@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using BugTracker.Models.Helpers;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,15 @@ namespace BugTracker.Models.Filters
     public class CanActFilter : ActionFilterAttribute
     {
         public ApplicationDbContext DbContext = new ApplicationDbContext();
+        private BugTrackerHelper bugTrackerHelper;
+
+        public CanActFilter()
+        {
+            bugTrackerHelper = new BugTrackerHelper(DbContext);
+        }
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            base.OnActionExecuting(filterContext);
             var actionParameter = filterContext.ActionParameters.SingleOrDefault(p => p.Key == "id").Value.ToString();
 
             if (string.IsNullOrEmpty(actionParameter))
@@ -29,26 +35,28 @@ namespace BugTracker.Models.Filters
             var isDeveloper = HttpContext.Current.User.IsInRole("Developer");
             var isAdminManager = HttpContext.Current.User.IsInRole("Admin")
                 || HttpContext.Current.User.IsInRole("ProjectManager");
-            var ticket = DbContext.Tickets.Where(p => p.Id == ticketId).FirstOrDefault();
+            var ticket = bugTrackerHelper.GetCurrentTicketById(ticketId);
             bool canCreate = false;
 
-            if (isDeveloper && isSubmitter)
+            if (ticket != null)
             {
-                canCreate = (userId == ticket.AssignedToUserId || userId == ticket.OwnerUserId);
+                if (isDeveloper && isSubmitter)
+                {
+                    canCreate = (userId == ticket.AssignedToUserId || userId == ticket.OwnerUserId);
+                }
+                else if (isDeveloper)
+                {
+                    canCreate = userId == ticket.AssignedToUserId;
+                }
+                else if (isSubmitter)
+                {
+                    canCreate = userId == ticket.OwnerUserId;
+                }
+                if (isAdminManager)
+                {
+                    canCreate = true;
+                }
             }
-            else if(isDeveloper)
-            {
-                canCreate =  userId == ticket.AssignedToUserId;
-            }
-            else if (isSubmitter)
-            {
-                canCreate = userId == ticket.OwnerUserId;
-            }
-            if(isAdminManager)
-            {
-                canCreate = true;
-            }
-            
             filterContext.Controller.ViewData.Add("CanCreate", canCreate);
         }
     }

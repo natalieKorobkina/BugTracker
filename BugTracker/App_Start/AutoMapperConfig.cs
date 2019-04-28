@@ -18,11 +18,17 @@ namespace BugTracker.App_Start
                 cfg.CreateMap<Ticket, AllTicketsViewModel>();
                 cfg.CreateMap<CreateTicketViewModel, Ticket>();
                 cfg.CreateMap<Ticket, EditTicketViewModel>();
-                cfg.CreateMap<EditTicketViewModel, Ticket>();
+
+                
+                cfg.CreateMap<EditTicketViewModel, Ticket>().ForAllMembers(
+    opt => opt.Condition((src, dest, sourceMember) => sourceMember != null)); 
+                //.ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));  
                 cfg.CreateMap<TicketAttachment, CreateEditAttachmentViewModel>();
                 cfg.CreateMap<TicketComment, CreateEditCommentViewModel>();
             });
 
         }
     }
+
+    
 }

@@ -28,7 +28,7 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Admin, ProjectManager")]
         public ActionResult AllProjects()
         {
-            var model = DbContext.Projects.Select(p => new AllProjectsViewModel
+            var model = bugTrackerHelper.ActiveProjects().Select(p => new AllProjectsViewModel
             {
                 Id = p.Id,
                 Name = p.Name,
@@ -145,7 +145,7 @@ namespace BugTracker.Controllers
         {
             if (id.HasValue)
             {
-                var project = DbContext.Projects.FirstOrDefault(p => p.Id == id.Value);
+                var project = bugTrackerHelper.GetProjectById(id.Value);
 
                 if (project != null)
                 {
@@ -165,6 +165,26 @@ namespace BugTracker.Controllers
         public ActionResult Edit(int? id, CreateUpdateProjectViewModel formData)
         {
             return AddProjectToDatabase(id, formData);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin, ProjectManager")]
+        public ActionResult Archive(int? id)
+        {
+            if (id.HasValue)
+            {
+                var project = bugTrackerHelper.GetProjectById(id);
+
+                if (project != null)
+                {
+                    project.Archived = true;
+                    project.Tickets.ForEach(t => t.Archived = true);
+
+                    DbContext.SaveChanges();
+                }
+            }
+
+            return RedirectToAction("AllProjects", "Project");
         }
 
         private ActionResult AddProjectToDatabase(int? id, CreateUpdateProjectViewModel formData)

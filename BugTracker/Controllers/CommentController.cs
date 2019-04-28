@@ -17,11 +17,13 @@ namespace BugTracker.Controllers
     {
         private ApplicationDbContext DbContext;
         private BugTrackerHelper bugTrackerHelper;
+        private NotificationHelper notificationHelper;
 
         public CommentController()
         {
             DbContext = new ApplicationDbContext();
             bugTrackerHelper = new BugTrackerHelper(DbContext);
+            notificationHelper = new NotificationHelper(DbContext);
         }
 
         [HttpGet]
@@ -56,7 +58,7 @@ namespace BugTracker.Controllers
         [HttpPost]
         [Authorize]
         [HasRightEdit]
-        public ActionResult EditAttachment(int? id, int? commentId, CreateEditCommentViewModel formData)
+        public ActionResult EditComment(int? id, int? commentId, CreateEditCommentViewModel formData)
         {
             return SaveComment(id, commentId, formData);
         }
@@ -67,6 +69,8 @@ namespace BugTracker.Controllers
                 return RedirectToAction("AllTickets", "Ticket");
 
             TicketComment comment = new TicketComment();
+            var ticket = bugTrackerHelper.GetCurrentTicketById(id.Value);
+            var message = notificationHelper.CreateCommentNotification(ticket.Title);
 
             if (commentId == null)
             {
@@ -74,6 +78,7 @@ namespace BugTracker.Controllers
                 comment.TicketId = id.Value;
                 comment.UserId = User.Identity.GetUserId();
                 DbContext.TicketComments.Add(comment);
+                notificationHelper.SendNotification(ticket, message, false);
             }
             else
             {

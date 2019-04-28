@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using BugTracker.Models;
 using BugTracker.Models.Helpers;
+using BugTracker.Models.ViewModels.Home;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -29,9 +30,45 @@ namespace BugTracker.Controllers
             bugTrackerHelper = new BugTrackerHelper(DbContext);
         }
 
+        [Authorize(Roles = "Admin, ProjectManager, Developer, Submitter")]
         public ActionResult Index()
         {
-            return View();
+            var model = new DashboardViewModel();
+            var userId = User.Identity.GetUserId();
+
+            if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
+            {
+                model.NumberProjects = bugTrackerHelper.GetNumberProject();
+                model.NumberOpenTickets = bugTrackerHelper.GetListTicketsByStatus("Open");
+                model.NumberRejectedTickets = bugTrackerHelper.GetListTicketsByStatus("Rejected");
+                model.NumberResolvedTickets = bugTrackerHelper.GetListTicketsByStatus("Resolved");
+                model.NumberTickets = bugTrackerHelper.ActiveTickets().Count();
+
+                return View(model);
+            }
+
+            model.NumberProjects = bugTrackerHelper.GetUserProjectsById(userId).Count();
+
+            if (User.IsInRole("Developer"))
+            {
+                model.NumberTicketsAssigned = bugTrackerHelper.NumberTicketsUserAssigned(userId);
+                model.NumberTickets = bugTrackerHelper.GetTicketsForDeveloper(userId).Count();
+            }
+             
+            if (User.IsInRole("Submitter"))
+            {
+                model.NumberTicketsOwned = bugTrackerHelper.NumberTicketsUserOwned(userId);
+                model.NumberTickets = bugTrackerHelper.GetTicketsForSubmitters(userId).Count();
+            }
+
+            if (User.IsInRole("Submitter") && User.IsInRole("Developer"))
+            {
+                model.NumberTicketsAssigned = bugTrackerHelper.NumberTicketsUserAssigned(userId);
+                model.NumberTicketsOwned = bugTrackerHelper.NumberTicketsUserOwned(userId);
+                model.NumberTickets = bugTrackerHelper.GetTicketsForDevSubmitters(userId).Count();
+            }
+
+            return View(model);
         }
 
         [HttpGet]
@@ -108,7 +145,7 @@ namespace BugTracker.Controllers
                     }
                 }
             }
-
+            // If admin edit his roles re-assign his account
             if (id == currentUserId)
             {
                 var authenticationManager = HttpContext.GetOwinContext().Authentication;

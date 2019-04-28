@@ -37,7 +37,10 @@ namespace BugTracker.Models
         {
             List<SeededRoles> Accounts = new List<SeededRoles>()
             {
-                new SeededRoles(Roles.Admin,"admin","Password-1", "admin@mybugtracker.com")
+                new SeededRoles(Roles.Admin,"admin","Password-1", "admin@mybugtracker.com"),
+                new SeededRoles(Roles.ProjectManager, "project manager", "Password-1", "manager@mybugtracker.com"),
+                new SeededRoles(Roles.Developer, "developer", "Password-1", "developer@mybugtracker.com"),
+                new SeededRoles(Roles.Submitter,"submitter","Password-1", "submitter@mybugtracker.com")
             };
 
             return Accounts;

@@ -18,9 +18,11 @@ namespace BugTracker.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext DbContext;
 
         public AccountController()
         {
+            DbContext = new ApplicationDbContext();
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
@@ -89,6 +91,41 @@ namespace BugTracker.Controllers
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
+            }
+        }
+
+        //
+        // GET: /Account/DemoLogin
+        [AllowAnonymous]
+        public ActionResult DemoLogin()
+        {
+            //ViewBag.ReturnUrl = returnUrl;
+            return View();
+        }
+
+        //
+        // POST: /Account/emoLoginAs
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DemoLoginAs(string roleName)
+        {
+            var Accounts = SeededRoles.CreateAccountsList();
+            var user = Accounts.Where(p => p.Role == roleName).FirstOrDefault();
+            
+            var result = await SignInManager.PasswordSignInAsync
+                (user.Email, user.Password, false, shouldLockout: false);
+
+            switch (result)
+            {
+                case SignInStatus.Success:
+                    return RedirectToAction("Index", "Home");
+                case SignInStatus.LockedOut:
+                    return View("Lockout");
+                case SignInStatus.Failure:
+                default:
+                    ModelState.AddModelError("", "Invalid login attempt.");
+                    return View();
             }
         }
 
@@ -230,12 +267,17 @@ namespace BugTracker.Controllers
             return View(model);
         }
 
+        public void SendMessageToDeveloper()
+        {
+
+        }
+
         //
         // GET: /Account/ForgotPasswordConfirmation
         [AllowAnonymous]
-        public ActionResult ForgotPasswordConfirmation()
+        public void ForgotPasswordConfirmation()
         {
-            return View();
+           
         }
 
         //

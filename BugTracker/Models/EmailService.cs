@@ -31,6 +31,7 @@ namespace BugTracker.Models
         public void Send(string to, string body, string subject)
         {
             //Creates a MailMessage required to send messages
+
             var message = new MailMessage(SmtpFrom, to);
             message.Body = body;
             message.Subject = subject;

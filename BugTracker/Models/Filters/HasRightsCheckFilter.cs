@@ -1,6 +1,7 @@
 ﻿using BugTracker.Controllers;
 using BugTracker.Models.Domain;
 using BugTracker.Models.Helpers;
+using BugTracker.Models.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
@@ -15,15 +16,22 @@ namespace BugTracker.Models.Filters
     public class HasRightsCheckFilter: ActionFilterAttribute
     {
         public ApplicationDbContext DbContext = new ApplicationDbContext();
+        public virtual IDictionary<string, object> ActionArguments { get; }
+        private BugTrackerHelper bugTrackerHelper;
+
+        public HasRightsCheckFilter()
+        {
+            bugTrackerHelper = new BugTrackerHelper(DbContext);
+        }
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            base.OnActionExecuting(filterContext);
             var actionParamentr = filterContext.ActionParameters.SingleOrDefault(p => p.Key == "id").Value.ToString();
 
             if (string.IsNullOrEmpty(actionParamentr))
             {
-                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary { { "controller", "Ticket" }, { "action", "AllTickets" } });
+                filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary {
+                    { "controller", "Ticket" }, { "action", "AllTickets" } });
             }
 
             int ticketId = Convert.ToInt32(actionParamentr);
@@ -32,9 +40,16 @@ namespace BugTracker.Models.Filters
             var isDeveloper = HttpContext.Current.User.IsInRole("Developer");
             var isAdminManager = HttpContext.Current.User.IsInRole("Admin") 
                 || HttpContext.Current.User.IsInRole("ProjectManager");
-            var ticket = DbContext.Tickets.Where(p => p.Id == ticketId).FirstOrDefault();
+            var ticket = bugTrackerHelper.GetCurrentTicketById(ticketId);
 
-            
+            if (ticket == null)
+            {
+                filterContext.Result = new ViewResult()
+                {
+                    ViewName = "AutorizationError"
+                };
+            }
+
             if (!isAdminManager)
             {
                 if (isDeveloper && (ticket.AssignedToUserId != userId))

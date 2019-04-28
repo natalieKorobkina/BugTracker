@@ -186,19 +186,21 @@
     <Compile Include="AttachmentConstants.cs" />
     <Compile Include="Controllers\AttachmentController.cs" />
     <Compile Include="Controllers\CommentController.cs" />
-    <Compile Include="Controllers\HistoryController.cs" />
     <Compile Include="Controllers\TicketController.cs" />
     <Compile Include="Models\ExceptionLog.cs" />
     <Compile Include="Models\Filters\CanActFilter.cs" />
     <Compile Include="Models\Filters\HasRightEdit.cs" />
     <Compile Include="Models\Filters\HasRightsCheckFilter.cs" />
     <Compile Include="Models\Filters\LogExceptionFilter.cs" />
-    <Compile Include="Models\ViewModels\History\ShowHistoryViewModel.cs" />
+    <Compile Include="Models\Helpers\HistoryHelper.cs" />
+    <Compile Include="Models\Helpers\NotificationHelper.cs" />
+    <Compile Include="Models\ViewModels\Home\DashboardViewModel.cs" />
     <Compile Include="Models\ViewModels\Ticket\AllTicketsViewModel.cs" />
     <Compile Include="Models\ViewModels\Attachment\CreateEditAttachmentViewModel.cs" />
     <Compile Include="Models\ViewModels\Comment\CreateEditCommentViewModel.cs" />
     <Compile Include="Models\ViewModels\Ticket\CreateTicketViewModel.cs" />
     <Compile Include="Models\ViewModels\Ticket\EditTicketViewModel.cs" />
+    <Compile Include="Models\ViewModels\Ticket\GhangesViewModel.cs" />
     <Compile Include="Models\ViewModels\Ticket\TicketDetailsViewModel.cs" />
     <Compile Include="Models\ViewModels\Ticket\TicketsAssignmentViewModel.cs" />
     <Compile Include="ProjectConstants.cs" />
@@ -374,6 +376,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\scriptAction.js" />
+    <Content Include="Scripts\scriptActionArchive.js" />
     <Content Include="Scripts\tinymce\jquery.tinymce.min.js" />
     <Content Include="Scripts\tinymce\license.txt" />
     <Content Include="Scripts\tinymce\plugins\advlist\plugin.js" />
@@ -624,6 +627,7 @@
     <Content Include="Views\Attachment\EditAttachment.cshtml" />
     <Content Include="Views\Comment\EditComment.cshtml" />
     <Content Include="Views\History\ShowHistory.cshtml" />
+    <Content Include="Views\Account\DemoLogin.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -3,60 +3,66 @@
     ViewBag.Title = "AllProjects";
 }
 
-    @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
-    {
-        <div class="list-unstyled list-inline list-btn">
-            <a class="btn btn-dark" href="@Url.Action("Create", "Project")">
-                Add new project
-            </a>
-        </div>
-    }
-    <hr />
-    <!--Show all projects-->
-    @if (Model != null || Model.Any())
-    {
-        <table id="table_id" class="table-striped table-bordered compact" style="width:100%">
-            <thead>
+@if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
+{
+    <div class="list-unstyled list-inline list-btn">
+        <a class="btn btn-dark" href="@Url.Action("Create", "Project")">
+            Add new project
+        </a>
+    </div>
+}
+<hr />
+<!--Show all projects-->
+@if (Model != null || Model.Any())
+{
+    <table id="table_id" class="table-striped table-bordered compact" style="width:100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Members</th>
+                <th>Tickets</th>
+                <th>Created</th>
+                <th>Updated</th>
+                <th><div style="min-width: 50px"></div></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var project in Model)
+            {
                 <tr>
-                    <th>Name</th>
-                    <th>Members</th>
-                    <th>Tickets</th>
-                    <th>Created</th>
-                    <th>Updated</th>
-                    <th></th>
+                    <td>@project.Name</td>
+                    <td>@project.MembersNumber</td>
+                    <td>@project.TicketsNumber</td>
+                    <td>@project.DateCreated.ToString("dd-MM-yyyy HH:mm")</td>
+                    <td>
+                        @if (project.DateCreated.ToString("dd-MM-yyyy HH:mm")
+                            != project.DateUpdated.ToString("dd-MM-yyyy HH:mm"))
+                        {
+                            @project.DateUpdated.ToString("dd-MM-yyyy HH:mm")
+                        }
+                    </td>
+                    <td>
+                        <div class="justify-content-around flex-b">
+                            <a title="Edit Project" href="@Url.Action("Edit", "Project", new { id = project.Id })">
+                                <i class="ti-pencil text-primary"></i>
+                            </a>
+                            <a title="Manage Project Members" href="@Url.Action("EditMembers", "Project", new { id = project.Id })">
+                                <i class="ti-list text-primary"></i>
+                            </a>
+                            @*<a title="Archive Project" href="@Url.Action("Archive", "Project", new { id = project.Id })">
+                                    <i class="ti-archive text-primary"></i>
+                                </a>*@
+                            <form method="post" action="@Url.Action("Archive", "Project", new { id = project.Id })">
+                                <a href="#" title="Archive Project" class="actionArchive"> 
+                                    <i class="ti-archive text-primary"></i>
+                                </a>
+                            </form>
+                        </div>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var project in Model)
-                {
-                    <tr>
-                        <td>@project.Name</td>
-                        <td>@project.MembersNumber</td>
-                        <td>@project.TicketsNumber</td>
-                        <td>@project.DateCreated.ToString("dd-MM-yyyy HH:mm")</td>
-                        <td>
-                            @if (project.DateCreated.ToString("dd-MM-yyyy HH:mm")
-                                != project.DateUpdated.ToString("dd-MM-yyyy HH:mm"))
-                            {
-                                @project.DateUpdated.ToString("dd-MM-yyyy HH:mm")
-                            }
-                        </td>
-                        <td>
-                            <div class="justify-content-around flex-b">
-                                <a title="Edit Project" href="@Url.Action("Edit", "Project", new { id = project.Id })">
-                                    <i class="ti-pencil text-primary"></i>
-                                </a>
-                                <a title="Manage Project Members" href="@Url.Action("EditMembers", "Project", new { id = project.Id })">
-                                    <i class="ti-list text-primary"></i>
-                                </a>
-                            </div>
-
-                        </td>
-                    </tr>
-                }
-        </table>
-    }
-
+            }
+    </table>
+}
 
 @section scripts {
     <script type="text/javascript">
@@ -64,4 +70,5 @@
             $('#table_id').DataTable();
         });
     </script>
+    <script src="~/Scripts/scriptActionArchive.js" type="text/javascript"></script>
 }

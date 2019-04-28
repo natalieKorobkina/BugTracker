@@ -22,6 +22,7 @@ namespace BugTracker.Models.ViewModels
         public ApplicationUser AssignedToUser { get; set; }
         public List<AttachmentForList> TicketAttachments { get; set; }
         public List<CommentForList> TicketComments { get; set; }
+        public List<TicketHistory> TicketHistories { get; set; }
 
         public bool CanCreate { get; set; }
     }
@@ -37,4 +38,5 @@ namespace BugTracker.Models.ViewModels
         public TicketComment TicketComment { get; set; }
         public bool CanEdit { get; set; }
     }
+
 }

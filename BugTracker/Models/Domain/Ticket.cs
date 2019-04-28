@@ -12,6 +12,7 @@ namespace BugTracker.Models.Domain
         public string Description { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? DateUpdated { get; set; }
+        public bool Archived { get; set; }
 
         public virtual Project Project { get; set; }
         public int ProjectId { get; set; }
@@ -35,5 +36,6 @@ namespace BugTracker.Models.Domain
         public virtual List<TicketComment> Comments { get; set; }
         public virtual List<TicketHistory> Histories { get; set; }
         public virtual List<TicketNotification> Notifications { get; set; }
+
     }
 }

@@ -13,6 +13,6 @@ namespace BugTracker.Models.Domain
         public int TicketId { get; set; }
 
         public virtual ApplicationUser User { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BugTracker.Models.Domain;
@@ -43,12 +44,15 @@ namespace BugTracker.Models
         }
 
         public DbSet<Project> Projects { get; set; }
+        
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketType> TicketTypes { get; set; }
         public DbSet<TicketStatus> TicketStatuses { get; set; }
         public DbSet<TicketPriority> TicketPriorities { get; set; }
         public DbSet<TicketAttachment> TicketAttachments { get; set; }
         public DbSet<TicketComment> TicketComments { get; set; }
+        public DbSet<TicketNotification> TicketNotifications { get; set; }
+        public DbSet<TicketHistory> TicketHistories { get; set; }
         public DbSet<ExceptionLog> ExceptionLogs { get; set; }
 
         public static ApplicationDbContext Create()

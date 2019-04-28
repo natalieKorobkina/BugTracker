@@ -20,5 +20,7 @@ namespace BugTracker.Models.ViewModels
         public ApplicationUser AssignedToUser { get; set; }
         public bool EditAvailable { get; set; }
         public string UserId { get; set; }
+
+        public bool OffNotification { get; set; }
     }
 }

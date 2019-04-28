@@ -2,72 +2,95 @@
 @{
     ViewBag.Title = "All Tickets";
 }
-    <h3>@ViewBag.Title</h3>
+<h3>@ViewBag.Title</h3>
 
-    @if (Model.Any())
-    {
-        <table id="table_id" class="table-striped table-bordered compact" style="width:100%">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Project</th>
-                    <th></th>
-                    <th>Title</th>
-                    <th>Created</th>
-                    <th>Updated</th>
-                    <th>Type</th>
-                    <th>Status</th>
-                    <th>Priority</th>
-                    <th>Creator</th>
-                    <th>Assigned Developer</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var ticket in Model)
+@if (Model.Any())
+{
+    <table id="table_id" class="table-striped table-bordered compact" style="width:100%">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Project</th>
+                <th></th>
+                <th>Title</th>
+                <th>Created</th>
+                <th>Updated</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Creator</th>
+                <th>Assigned Developer</th>
+                @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
                 {
-                    <tr>
-                        <td>
-                            <a title="Ticket Details" href="@Url.Action("TicketDetails", "Ticket", new { id = ticket.Id })">
-                                <i class="ti-receipt text-primary"></i>
-                            </a>
-                            @ticket.Id
-                        </td>
-                        <td>@ticket.Project.Name</td>
-                        <td>
-                            @if (ticket.EditAvailable == true)
-                            {
-                                <a title="Edit Ticket" href="@Url.Action("Edit", "Ticket", new { id = ticket.Id })">
-                                    <i class="ti-pencil text-primary"></i>
-                                </a>
-                            }
-                        </td>
-                        <td>
-                            @ticket.Title
-                        </td>
-                        <td>@ticket.DateCreated.ToString("dd-MM-yyyy HH:mm")</td>
-                        <td>
-                            @if (ticket.DateUpdated != null)
-                            {
-                                @ticket.DateUpdated.Value.ToString("dd-MM-yyyy HH:mm")
-                            }
-                        </td>
-                        <td>@ticket.TicketType.Name</td>
-                        <td>@ticket.TicketStatus.Name</td>
-                        <td>@ticket.TicketPriority.Name</td>
-                        <td>@ticket.OwnerUser.DisplayName</td>
-                        <td>
-                            <a title="Assign Developer" href="@Url.Action("TicketsAssignment", "Ticket", new { id = ticket.Id })">
-                                <i class="ti-link text-primary"></i>
-                            </a>
-                            @if (ticket.AssignedToUser != null)
-                            {
-                                @ticket.AssignedToUser.DisplayName
-                            }
-                        </td>
-                    </tr>
+                    <th>
+                        Send
+                    </th>
                 }
-        </table>
-    }
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var ticket in Model)
+            {
+
+                <tr>
+                    <td>
+                        <a title="Ticket Details" href="@Url.Action("TicketDetails", "Ticket", new { id = ticket.Id })">
+                            <i class="ti-receipt text-primary"></i>
+                        </a>
+                        @ticket.Id
+                    </td>
+                    <td>@ticket.Project.Name</td>
+                    <td>
+                        @if (ticket.EditAvailable == true)
+                        {
+                            <a title="Edit Ticket" href="@Url.Action("Edit", "Ticket", new { id = ticket.Id })">
+                                <i class="ti-pencil text-primary"></i>
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @ticket.Title
+                    </td>
+                    <td>@ticket.DateCreated.ToString("dd-MM-yyyy HH:mm")</td>
+                    <td>
+                        @if (ticket.DateUpdated != null)
+                        {
+                            @ticket.DateUpdated.Value.ToString("dd-MM-yyyy HH:mm")
+                        }
+                    </td>
+                    <td>@ticket.TicketType.Name</td>
+                    <td>@ticket.TicketStatus.Name</td>
+                    <td>@ticket.TicketPriority.Name</td>
+                    <td>@ticket.OwnerUser.DisplayName</td>
+                    <td>
+                        <a title="Assign Developer" href="@Url.Action("TicketsAssignment", "Ticket", new { id = ticket.Id })">
+                            <i class="ti-link text-primary"></i>
+                        </a>
+                        @if (ticket.AssignedToUser != null)
+                        {
+                            @ticket.AssignedToUser.DisplayName
+                        }
+                    </td>
+                    @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
+                    {
+                        <td>
+                            @using (Html.BeginForm("AllTickets", "Ticket", new { id = ticket.Id }, FormMethod.Post))
+                            {
+                                <input type="checkbox"
+                                       value="@ticket.Id"
+                                       name="sendNotification"
+                                       @(ticket.OffNotification ? "checked" : "" ) />
+                                <input type="submit" value="Save" />
+                            }
+                        </td>
+                    }
+
+                </tr>
+            }
+    </table>
+}
+
 
 
 @section scripts {

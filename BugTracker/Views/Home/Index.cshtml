@@ -1,6 +1,5 @@
-﻿@using BugTracker.Models
-@using Microsoft.AspNet.Identity
-@model LoginViewModel
+﻿@using Microsoft.AspNet.Identity
+@model DashboardViewModel
 @{
     ViewBag.Title = "Dashboard";
 }
@@ -13,8 +12,9 @@
                         <i class="ti-folder" style="color:darkviolet; font-size:45px"></i>
                     </div>
                     <div>
-                        <span class="menu-title" style="color:darkviolet; font-size: 20px">MY PROJECTS</span>
+                        <span class="menu-title" style="color:darkviolet; font-size: 20px">PROJECTS: @Model.NumberProjects</span>
                     </div>
+                    
                 </a>
             </div>
         </div>
@@ -27,9 +27,38 @@
                         <i class="ti-files" style="color:darkcyan; font-size:45px"></i>
                     </div>
                     <div>
-                        <span class="menu-title" style="color:darkcyan; font-size: 20px">MY TICKETS</span>
+                        <span class="menu-title" style="color:darkcyan; font-size: 20px">TICKETS: @Model.NumberTickets</span>
                     </div>
-                </a>
+                    @if (Model.NumberOpenTickets != null)
+                    {
+                        <div>
+                            <span class="menu-title" style="color:darkcyan; font-size: 20px">Opened: @Model.NumberOpenTickets</span>
+                        </div>
+                    }
+                    @if (Model.NumberResolvedTickets != null)
+                    {
+                        <div>
+                            <span class="menu-title" style="color:darkcyan; font-size: 20px">Resolved: @Model.NumberResolvedTickets</span>
+                        </div>
+                    }
+                    @if (Model.NumberRejectedTickets != null)
+                    {
+                        <div>
+                            <span class="menu-title" style="color:darkcyan; font-size: 20px">Rejected: @Model.NumberRejectedTickets</span>
+                        </div>
+                    }
+                    @if (Model.NumberTicketsAssigned != null)
+                    {
+                        <div>
+                            <span class="menu-title" style="color:darkcyan; font-size: 20px">Assigned: @Model.NumberTicketsAssigned</span>
+                        </div>
+                    }
+                    @if (Model.NumberTicketsOwned != null)
+                    {
+                        <div>
+                            <span class="menu-title" style="color:darkcyan; font-size: 20px">Created: @Model.NumberTicketsOwned</span>
+                        </div>
+                    }
             </div>
         </div>
     </div>

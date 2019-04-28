@@ -4,11 +4,6 @@
 }
 
 <h3>@ViewBag.Title</h3>
-<div>
-    <a title="Show Ticket History" href="@Url.Action("ShowHistory", "History", new {id = Model.Id})">
-        <i class="ti-pencil-alt btn-dark"></i> History
-    </a>
-</div>
 <table id="table_id" class="table-striped table-bordered compact" style="width:100%">
     <thead>
         <tr>
@@ -21,6 +16,7 @@
             <th>Priority</th>
             <th>Creator</th>
             <th>Assigned Developer</th>
+            
         </tr>
     </thead>
     <tbody>
@@ -59,7 +55,7 @@
 </div>
 <br />
 <div class="row" style="display:flex;">
-    <div class="col-md-6" style="width:100%">
+    <div class="col-md-4" style="width:100%">
         <h4>Comments:</h4>
 
         @foreach (var comment in Model.TicketComments)
@@ -93,7 +89,7 @@
             </div>
         }
     </div>
-    <div class="col-md-6" style="width:100%">
+    <div class="col-md-4" style="width:100%">
         <h4>Attachments:</h4>
 
         @foreach (var attachment in Model.TicketAttachments)
@@ -125,6 +121,36 @@
                                 </div>
                             </div>
                         }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-4" style="width:100%">
+        <h4>History:</h4>
+
+        @foreach (var history in Model.TicketHistories)
+        {
+            <div class="grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        @history.User.DisplayName
+                        @if (@history.Changed != null)
+                        {
+                            <i class="ti-alarm-clock menu-icon"></i> @history.Changed.Value.ToString("dd-MM-yyyy HH:mm")
+                        }
+                        changed
+                        <hr />
+                        <div style="color:black">
+                            Ticket's @history.Property
+                        </div>
+                        <div style="color:dimgray">
+                            from: "@history.OldValue"
+                        </div>
+                        <div style="color:dimgray">
+                            to: "@history.NewValue"
+                        </div>
                     </div>
                 </div>
             </div>
