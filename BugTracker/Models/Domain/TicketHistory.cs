@@ -12,6 +12,7 @@ namespace BugTracker.Models.Domain
         public string OldValue { get; set; }
         public string NewValue { get; set; }
         public DateTime? Changed { get; set; }
+        public bool Archived { get; set; }
 
         public virtual Ticket Ticket { get; set; }
         public int TicketId { get; set; }

@@ -58,8 +58,7 @@ namespace BugTracker.Controllers
 
                 foreach (var ticket in model)
                 {
-                    ticket.OffNotification = DbContext.TicketNotifications
-                        .FirstOrDefault(n => n.TicketId == ticket.Id && n.UserId == userId) != null;
+                    ticket.OffNotification = notificationHelper.GetNotificationByTicketUserIds(ticket.Id, userId) != null;
                 }
 
                 return View(model);
@@ -81,6 +80,7 @@ namespace BugTracker.Controllers
 
                 return View(model);
             }
+
             if (isSubmitter)
             {
                 model = bugTrackerHelper.GetTicketsForSubmitters(userId).ProjectTo<AllTicketsViewModel>().ToList();
@@ -98,7 +98,7 @@ namespace BugTracker.Controllers
         {
             var userId = User.Identity.GetUserId();
             var ticket = bugTrackerHelper.GetCurrentTicketById(id.Value);
-            var notification = DbContext.TicketNotifications.FirstOrDefault(n => n.TicketId == ticket.Id && n.UserId == userId);
+            var notification = notificationHelper.GetNotificationByTicketUserIds(ticket.Id, userId);
 
             if (notification == null && sendNotification != null)
             {
@@ -189,54 +189,6 @@ namespace BugTracker.Controllers
         public ActionResult Edit(int? id, EditTicketViewModel formData)
         {
             var ticket = bugTrackerHelper.GetCurrentTicketById(id.Value);
-            bool wasModifyed = false;
-
-            if (!ModelState.IsValid || id == null || ticket == null)
-            {
-                return RedirectToAction(nameof(TicketController.AllTickets));
-            }
-
-            if (ticket.Title != formData.Title)
-            {
-                historyHelper.CreateHistory(ticket.Title, formData.Title, ticket.Id, "Title");
-                wasModifyed = true;
-            }
-
-            if (ticket.Description != formData.Description)
-            {
-                historyHelper.CreateHistory(ticket.Description, formData.Description, ticket.Id, "Description");
-                wasModifyed = true;
-            }
-
-            if (ticket.ProjectId != formData.ProjectId)
-            {
-                var newProjectName = bugTrackerHelper.GetProjectNameById(formData.ProjectId);
-                historyHelper.CreateHistory(ticket.Project.Name, newProjectName, ticket.Id, "Project");
-                wasModifyed = true;
-            }
-
-            if (ticket.TicketPriorityId != formData.TicketPriorityId)
-            {
-                var newPriority = DbContext.TicketPriorities.FirstOrDefault(p => p.Id == formData.TicketPriorityId);
-                historyHelper.CreateHistory(ticket.TicketPriority.Name, newPriority.Name, ticket.Id, "Priority");
-                wasModifyed = true;
-            }
-
-            if (ticket.TicketTypeId != formData.TicketTypeId)
-            {
-                var newType = DbContext.TicketTypes.FirstOrDefault(p => p.Id == formData.ProjectId);
-                historyHelper.CreateHistory(ticket.TicketType.Name, newType.Name, ticket.Id, "Type");
-                wasModifyed = true;
-            }
-
-            if (formData.TicketStatusId != 0 && ticket.TicketStatusId != formData.TicketStatusId)
-            {
-                var newStatus = DbContext.TicketStatuses.FirstOrDefault(p => p.Id == formData.TicketStatusId);
-                historyHelper.CreateHistory(ticket.TicketStatus.Name, newStatus.Name, ticket.Id, "Status");
-                wasModifyed = true;
-            }
-
-            //ticket = Mapper.Map<Ticket>(formData);
 
             ticket.Title = formData.Title;
             ticket.Description = formData.Description;
@@ -250,36 +202,7 @@ namespace BugTracker.Controllers
 
             DbContext.SaveChanges();
 
-            if(wasModifyed)
-            {
-                var message = notificationHelper.CreateModificationNotification(ticket.Title);
-
-                notificationHelper.SendNotification(ticket, message, false);
-            }
-            
             return RedirectToAction(nameof(TicketController.AllTickets));
-        }
-
-        public void ReflectiveEquals(object first, object second)
-        {
-            Type firstType = first.GetType();
-            if (second.GetType() != firstType)
-            {
-               // return false; // Or throw an exception
-            }
-
-            foreach (PropertyInfo propertyInfo in firstType.GetProperties())
-            {
-                if (propertyInfo.CanRead)
-                {
-                    object firstValue = propertyInfo.GetValue(first, null);
-                    object secondValue = propertyInfo.GetValue(second, null);
-                    if (!object.Equals(firstValue, secondValue))
-                    {
-                        //return false;
-                    }
-                }
-            }
         }
 
         [Authorize(Roles = "Admin, ProjectManager")]
@@ -303,7 +226,6 @@ namespace BugTracker.Controllers
         public ActionResult TicketsAssignment(int? id, TicketsAssignmentViewModel formData)
         {
             var ticket = bugTrackerHelper.GetCurrentTicketById(id.Value);
-            var message = notificationHelper.CreateAssignmentNotification(ticket.Title);
 
             if (id == null || ticket == null)
                 return RedirectToAction("AllTickets", "Ticket");
@@ -311,25 +233,23 @@ namespace BugTracker.Controllers
             if (ticket.AssignedToUserId != formData.DeveloperId)
             {
                 var newDeveloper = DbContext.Users.FirstOrDefault(p => p.Id == formData.DeveloperId);
-                if (ticket.AssignedToUserId != null)
-                {
-                    historyHelper.CreateHistory(ticket.AssignedToUser.DisplayName,
-                    newDeveloper.DisplayName, ticket.Id, "Assigned Developer");
+                var oldValue = (ticket.AssignedToUserId == null) ? "not assigned" : ticket.AssignedToUser.DisplayName;
 
-                    var messageModification = notificationHelper.CreateModificationNotification(ticket.Title);
-                    notificationHelper.SendNotification(ticket, messageModification, false);
-                }
+                historyHelper.CreateHistory(oldValue, newDeveloper.DisplayName, ticket.Id, "Assigned Developer");
+
+                ticket.AssignedToUserId = formData.DeveloperId;
+                var message = notificationHelper.CreateAssignmentNotification(ticket.Title, newDeveloper.DisplayName);
+                notificationHelper.SendNotification(ticket, message, true);
             }
 
-            ticket.AssignedToUserId = formData.DeveloperId;
             DbContext.SaveChanges();
-            notificationHelper.SendNotification(ticket, message, true);
-            
+
             return RedirectToAction("AllTickets", "Ticket");
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin, ProjectManager, Developer, Submitter")]
+        [HasRightsCheckFilter]
         [CanActFilter()]
         public ActionResult TicketDetails(int? id)
         {
@@ -344,6 +264,5 @@ namespace BugTracker.Controllers
 
             return View(model);
         }
-
     }
 }

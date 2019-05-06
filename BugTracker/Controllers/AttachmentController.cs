@@ -90,6 +90,14 @@ namespace BugTracker.Controllers
             }
 
             attachment.Description = formData.Description;
+            
+            if (formData.Media.ContentLength > 2029152)
+            {
+                ModelState.AddModelError("IsMaxRequestExceededException","The file's size cannot exсeed 2Mb");
+
+                return View();
+            }
+
             FileUpload(attachment, formData);
             DbContext.SaveChanges();
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using BugTracker.Models.Domain;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,33 +29,38 @@ namespace BugTracker.Models.Filters
             }
 
             var userId = HttpContext.Current.User.Identity.GetUserId();
-            var isAdminManager = HttpContext.Current.User.IsInRole("Admin")
-                || HttpContext.Current.User.IsInRole("ProjectManager");
+            var isAdminManager = HttpContext.Current.User.IsInRole("Admin") || HttpContext.Current.User.IsInRole("ProjectManager");
+            int itemId = 0;
+            TicketAttachment attachment = null;
+            TicketComment comment = null;
 
-            if (!isAdminManager)
+            if (actionAttachmentParameter != null)
             {
-                if (actionAttachmentParameter != null)
-                {
-                    var attachmentUserId = Convert.ToInt32(actionAttachmentParameter.ToString());
-                    var attachment = DbContext.TicketAttachments.FirstOrDefault(a => a.Id == attachmentUserId);
-                    if ((attachment != null) && (attachment.UserId != userId))
-                        filterContext.Result = new ViewResult()
-                        {
-                            ViewName = "AutorizationError"
-                        };
-                }
-                else if (actionCommentParameter != null)
-                {
-                    var commentUserId = Convert.ToInt32(actionCommentParameter.ToString());
-                    var comment = DbContext.TicketComments
-                        .FirstOrDefault(c => c.Id == commentUserId);
-                    if ((comment != null) && (comment.UserId != userId))
-                        filterContext.Result = new ViewResult()
-                        {
-                            ViewName = "AutorizationError"
-                        };
-                }
+                itemId = Convert.ToInt32(actionAttachmentParameter.ToString());
+                attachment = DbContext.TicketAttachments.FirstOrDefault(a => a.Id == itemId && a.Archived == false);
             }
-        }
-    }
+
+            if (actionCommentParameter != null)
+            {
+                itemId = Convert.ToInt32(actionCommentParameter.ToString());
+                comment = DbContext.TicketComments.FirstOrDefault(c => c.Id == itemId && c.Archived == false);
+            }
+
+            if (attachment == null && comment ==null)
+            {
+                filterContext.Result = new ViewResult() { ViewName = "ItemError" };
+            }
+            else
+            {
+                if (!isAdminManager)
+                {
+                    if ((attachment != null) && (attachment.UserId != userId))
+                        filterContext.Result = new ViewResult() { ViewName = "AutorizationError" };
+
+                    if ((comment != null) && (comment.UserId != userId))
+                        filterContext.Result = new ViewResult() { ViewName = "AutorizationError" };
+                }
+            }  
+        }   
+     }
 }

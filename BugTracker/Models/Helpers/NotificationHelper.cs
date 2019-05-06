@@ -51,26 +51,24 @@ namespace BugTracker.Models.Helpers
                 emailService.Send(developerEmail, message.Body, message.Title);
 
                 //Send emails subscribed admins/PMs
-                if (!assignment)
-                {
-                    var allSubscribers = DbContext.TicketNotifications
-                        .Where(n => n.TicketId == ticket.Id).Select(n => n.User.Email).ToList();
-                    if (allSubscribers.Any())
-                    {
-                        var adressesString = string.Join(", ", allSubscribers); 
+                var allSubscribers = DbContext.TicketNotifications
+                    .Where(n => n.TicketId == ticket.Id && n.UserId != ticket.AssignedToUserId).Select(n => n.User.Email).ToList();
 
-                        emailService.Send(adressesString, message.Body, message.Title);
-                    }
+                if (allSubscribers.Any())
+                {
+                    var adressesString = string.Join(", ", allSubscribers);
+
+                    emailService.Send(adressesString, message.Body, message.Title);
                 }
             }
         }
 
-        public Email CreateAssignmentNotification(string ticketTitle)
+        public Email CreateAssignmentNotification(string ticketTitle, string userName)
         {
             var email = new Email();
 
             email.Title = "Ticket assignment";
-            email.Body = "You were assigned to the ticket: " + "'" + ticketTitle + "'";
+            email.Body = $@"{userName} were assigned to the ticket: {ticketTitle}";
 
             return email;
         }
@@ -80,7 +78,7 @@ namespace BugTracker.Models.Helpers
             var email = new Email();
 
             email.Title = "Ticket modification";
-            email.Body = "The ticket: " + "'" + ticketTitle + "'" + ", to which you are assigned/subscribed has been modified";
+            email.Body = $@"The ticket: {ticketTitle}, to which you are assigned/subscribed has been modified";
 
             return email;
         }
@@ -103,6 +101,12 @@ namespace BugTracker.Models.Helpers
             email.Body = "There was comment's addition to the ticket: " + "'" + ticketTitle + "'" + ", to which you are assigned/subscribed";
 
             return email;
+        }
+
+        //Helpers for notifications
+        public TicketNotification GetNotificationByTicketUserIds(int ticketId, string userId)
+        {
+            return DbContext.TicketNotifications.FirstOrDefault(n => n.TicketId == ticketId && n.UserId == userId);
         }
     }
 }

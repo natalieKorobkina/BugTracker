@@ -38,7 +38,11 @@ namespace BugTracker.Models.Filters
             var ticket = bugTrackerHelper.GetCurrentTicketById(ticketId);
             bool canCreate = false;
 
-            if (ticket != null)
+            if (ticket == null) {
+
+                filterContext.Result = new ViewResult() { ViewName = "ItemError" };
+            }
+             else
             {
                 if (isDeveloper && isSubmitter)
                 {
@@ -56,7 +60,8 @@ namespace BugTracker.Models.Filters
                 {
                     canCreate = true;
                 }
-            }
+            }   
+
             filterContext.Controller.ViewData.Add("CanCreate", canCreate);
         }
     }

@@ -628,6 +628,7 @@
     <Content Include="Views\Comment\EditComment.cshtml" />
     <Content Include="Views\History\ShowHistory.cshtml" />
     <Content Include="Views\Account\DemoLogin.cshtml" />
+    <Content Include="Views\Shared\ItemError.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

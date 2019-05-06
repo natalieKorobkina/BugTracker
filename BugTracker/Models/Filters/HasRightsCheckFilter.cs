@@ -46,23 +46,25 @@ namespace BugTracker.Models.Filters
             {
                 filterContext.Result = new ViewResult()
                 {
-                    ViewName = "AutorizationError"
+                    ViewName = "ItemError"
                 };
             }
-
-            if (!isAdminManager)
+            else
             {
-                if (isDeveloper && (ticket.AssignedToUserId != userId))
-                    filterContext.Result = new ViewResult()
-                    {
-                        ViewName = "AutorizationError"
-                    };
+                if (!isAdminManager)
+                {
+                    if ((ticket.AssignedToUserId != null && isDeveloper) || isDeveloper && (ticket.AssignedToUserId != userId))
+                        filterContext.Result = new ViewResult()
+                        {
+                            ViewName = "AutorizationError"
+                        };
 
-                if (isSubmitter && (ticket.OwnerUserId != userId))
-                    filterContext.Result = new ViewResult()
-                    {
-                        ViewName = "AutorizationError"
-                    };
+                    if (isSubmitter && (ticket.OwnerUserId != userId))
+                        filterContext.Result = new ViewResult()
+                        {
+                            ViewName = "AutorizationError"
+                        };
+                }
             }
         }
     }

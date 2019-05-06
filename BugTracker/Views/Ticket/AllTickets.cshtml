@@ -23,7 +23,7 @@
                 @if (User.IsInRole("Admin") || User.IsInRole("ProjectManager"))
                 {
                     <th>
-                        Send
+                        Opt-In
                     </th>
                 }
             </tr>
@@ -81,7 +81,7 @@
                                        value="@ticket.Id"
                                        name="sendNotification"
                                        @(ticket.OffNotification ? "checked" : "" ) />
-                                <input type="submit" value="Save" />
+                                <input type="submit" class="btn-link" value="Save" />
                             }
                         </td>
                     }

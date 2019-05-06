@@ -1,9 +1,9 @@
 ﻿@model BugTracker.Models.LoginViewModel
 @{
-                /**/
+    /**/
 
-                ViewBag.Title = "Log in";
-                Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+    ViewBag.Title = "Log in";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
 }
 
 @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "login100-form validate-form p-l-55 p-r-55 p-t-170", role = "form" }))
@@ -23,13 +23,13 @@
         <span class="focus-input100"></span>
     </div>
 
-    <div class="checkbox p-t-13">
+    <div class="checkbox p-t-13" style="font-weight:900">
         @Html.CheckBoxFor(m => m.RememberMe)
         @Html.LabelFor(m => m.RememberMe)
     </div>
     <div class="text-right p-t-13 p-b-23" style="display:flex; justify-content:space-between">
         <div>
-            @Html.ActionLink("Demo Login", "DemoLogin", new { }, new { @class = "txt2" })
+            @Html.ActionLink("Demo Login", "DemoLogin", new { }, new { @class = "txt2", @style = "font-weight:900" })
         </div>
         <div>
             <span class="txt1">

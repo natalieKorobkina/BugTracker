@@ -152,7 +152,7 @@ namespace BugTracker.Controllers
                     var model = new CreateUpdateProjectViewModel();
 
                     model.Name = project.Name;
-                    model.Discription = project.Discription;
+                    model.Discription = project.Description;
 
                     return View(model);
                 }
@@ -178,7 +178,13 @@ namespace BugTracker.Controllers
                 if (project != null)
                 {
                     project.Archived = true;
-                    project.Tickets.ForEach(t => t.Archived = true);
+
+                    foreach (var ticket in project.Tickets)
+                    {
+                        ticket.Archived = true;
+                        ticket.Attachments.ForEach(a => a.Archived = true);
+                        ticket.Comments.ForEach(c => c.Archived = true);
+                    }
 
                     DbContext.SaveChanges();
                 }
@@ -212,7 +218,7 @@ namespace BugTracker.Controllers
                 }
             }
             project.Name = formData.Name;
-            project.Discription = formData.Discription;
+            project.Description = formData.Discription;
             project.DateUpdated = DateTime.Now;
 
             DbContext.SaveChanges();

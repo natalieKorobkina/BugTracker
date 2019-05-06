@@ -8,28 +8,28 @@
     <br />
     <h3 style="text-align:center">Choose a role to login:</h3>
 
-    @using (Html.BeginForm("DemoLoginAs", "Account", new { roleName = "Admin" }, FormMethod.Post,
+    @using (Html.BeginForm("DemoLoginAs", "Account", new { ReturnUrl = ViewBag.ReturnUrl, roleName = "Admin" }, FormMethod.Post,
     new { @class = "login100-form validate-form p-l-55 p-r-55 p-t-20", role = "form" }))
     {
         @Html.AntiForgeryToken()
         <button type="submit" class="login100-form-btn"> Admin </button>
     }
 
-    @using (Html.BeginForm("DemoLoginAs", "Account", new { roleName = "ProjectManager" }, FormMethod.Post,
+    @using (Html.BeginForm("DemoLoginAs", "Account", new { ReturnUrl = ViewBag.ReturnUrl, roleName = "ProjectManager" }, FormMethod.Post,
         new { @class = "login100-form validate-form p-l-55 p-r-55 p-t-20", role = "form" }))
     {
         @Html.AntiForgeryToken()
         <button type="submit" class="login100-form-btn"> Project Manager </button>
     }
 
-    @using (Html.BeginForm("DemoLoginAs", "Account", new { roleName = "Developer" }, FormMethod.Post,
+    @using (Html.BeginForm("DemoLoginAs", "Account", new { ReturnUrl = ViewBag.ReturnUrl, roleName = "Developer" }, FormMethod.Post,
         new { @class = "login100-form validate-form p-l-55 p-r-55 p-t-20", role = "form" }))
     {
         @Html.AntiForgeryToken()
         <button type="submit" class="login100-form-btn"> Developer </button>
     }
 
-    @using (Html.BeginForm("DemoLoginAs", "Account", new { roleName = "Submitter" }, FormMethod.Post,
+    @using (Html.BeginForm("DemoLoginAs", "Account", new { ReturnUrl = ViewBag.ReturnUrl, roleName = "Submitter" }, FormMethod.Post,
         new { @class = "login100-form validate-form p-l-55 p-r-55 p-t-20", role = "form" }))
     {
         @Html.AntiForgeryToken()

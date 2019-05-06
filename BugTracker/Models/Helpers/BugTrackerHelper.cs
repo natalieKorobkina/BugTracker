@@ -172,14 +172,24 @@ namespace BugTracker.Models.Helpers
             return Regex.Replace(string.Join(", ", list), "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ");
         }
 
+        public IQueryable<TicketAttachment> ActiveAttachments()
+        {
+            return DbContext.TicketAttachments.Where(t => t.Archived == false);
+        }
+
         public TicketAttachment GetAttachmentById(int? id)
         {
-            return DbContext.TicketAttachments.Where(a => a.Id == id.Value).Select(a => a).FirstOrDefault();
+            return ActiveAttachments().Where(a => a.Id == id.Value).Select(a => a).FirstOrDefault();
+        }
+
+        public IQueryable<TicketComment> ActiveComments()
+        {
+            return DbContext.TicketComments.Where(t => t.Archived == false);
         }
 
         public TicketComment GetCommentById(int? id)
         {
-            return DbContext.TicketComments.FirstOrDefault(c => c.Id == id.Value);
+            return ActiveComments().FirstOrDefault(c => c.Id == id.Value);
         }
 
         public int GetStatusOpen()
@@ -203,6 +213,11 @@ namespace BugTracker.Models.Helpers
                 TicketComment = p,
                 CanEdit = CheckIfUserAdminManager() || (p.UserId == GetUserId())
             }).ToList();
+        }
+
+        public IQueryable<TicketHistory> ActiveHistories()
+        {
+            return DbContext.TicketHistories.Where(t => t.Archived == false);
         }
 
         public List<TicketHistory> GetListHistories(Ticket ticket)

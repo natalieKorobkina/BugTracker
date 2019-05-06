@@ -54,6 +54,27 @@
     </div>
 </div>
 <br />
+<div style="display:flex; width: 65%">
+    <div style="width:100%">
+        @if (Model.CanCreate)
+        {
+            <a title="Post Comment" href="@Url.Action("CreateComment", "Comment", new { id = Model.Id })">
+                <i class="ti-comment text-primary"></i>
+                Add Comment
+            </a>
+        }
+    </div>
+    <div style="width:100%">
+        @if (Model.CanCreate)
+        {
+            <a title="Add Attachment" href="@Url.Action("CreateAttachment", "Attachment", new { id = Model.Id })">
+                <i class="ti-file text-primary"></i>
+                Add Attachment
+            </a>
+        }
+    </div>
+</div>
+<br />
 <div class="row" style="display:flex;">
     <div class="col-md-4" style="width:100%">
         <h4>Comments:</h4>
@@ -157,27 +178,7 @@
         }
     </div>
 </div>
-<div style="display:flex;">
-    <div style="width:100%">
-        @if (Model.CanCreate)
-        {
-            <a title="Post Comment" href="@Url.Action("CreateComment", "Comment", new { id = Model.Id })">
-                <i class="ti-comment text-primary"></i>
-                Add Comment
-            </a>
-        }
-    </div>
-    <div style="width:100%">
-        @if (Model.CanCreate)
-        {
-            <a title="Add Attachment" href="@Url.Action("CreateAttachment", "Attachment", new { id = Model.Id })">
-                <i class="ti-file text-primary"></i>
-                Add Attachment
-            </a>
-        }
-    </div>
 
-</div>
 @section scripts {
     <script type="text/javascript">
         $(document).ready(function () {

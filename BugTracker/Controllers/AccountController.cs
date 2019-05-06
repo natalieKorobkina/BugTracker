@@ -97,9 +97,9 @@ namespace BugTracker.Controllers
         //
         // GET: /Account/DemoLogin
         [AllowAnonymous]
-        public ActionResult DemoLogin()
+        public ActionResult DemoLogin(string returnUrl)
         {
-            //ViewBag.ReturnUrl = returnUrl;
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
@@ -108,7 +108,7 @@ namespace BugTracker.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DemoLoginAs(string roleName)
+        public async Task<ActionResult> DemoLoginAs(string returnUrl, string roleName)
         {
             var Accounts = SeededRoles.CreateAccountsList();
             var user = Accounts.Where(p => p.Role == roleName).FirstOrDefault();
@@ -119,7 +119,7 @@ namespace BugTracker.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.Failure:
