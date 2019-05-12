@@ -10,7 +10,7 @@ namespace BugTracker.Models.Filters
     {
         public void OnException(ExceptionContext filterContext)
         {
-            var log = new ExceptionLog();
+            var log = new ExcLog();
             log.Message = filterContext.Exception.Message;
             log.DateTime = DateTime.Now;
 

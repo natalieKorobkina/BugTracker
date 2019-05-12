@@ -48,8 +48,9 @@
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                             <div class="card-body">
                                 @{
+                                    var user = System.Web.HttpContext.Current.User.Identity.GetUserId();
                                     var manager = new UserManager<ApplicationUser>(new Microsoft.AspNet.Identity.EntityFramework.UserStore<ApplicationUser>(new ApplicationDbContext()));
-                                    var currentUser = manager.FindById(User.Identity.GetUserId());
+                                    var currentUser = manager.FindById(user);
                                 }
                                 <div class="text-center">
                                     <p style="font-weight:Bold;">@currentUser.DisplayName</p>

@@ -51,7 +51,7 @@ namespace BugTracker.Models
         public DbSet<TicketComment> TicketComments { get; set; }
         public DbSet<TicketNotification> TicketNotifications { get; set; }
         public DbSet<TicketHistory> TicketHistories { get; set; }
-        public DbSet<ExceptionLog> ExceptionLogs { get; set; }
+        public DbSet<ExcLog> ExceptionLogs { get; set; }
 
         private HistoryHelper historyHelper;
         private NotificationHelper notificationHelper;

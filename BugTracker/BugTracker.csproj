@@ -187,7 +187,7 @@
     <Compile Include="Controllers\AttachmentController.cs" />
     <Compile Include="Controllers\CommentController.cs" />
     <Compile Include="Controllers\TicketController.cs" />
-    <Compile Include="Models\ExceptionLog.cs" />
+    <Compile Include="Models\ExcLog.cs" />
     <Compile Include="Models\Filters\CanActFilter.cs" />
     <Compile Include="Models\Filters\HasRightEdit.cs" />
     <Compile Include="Models\Filters\HasRightsCheckFilter.cs" />
@@ -364,6 +364,7 @@
     <Content Include="fonts\Roboto\Roboto-Regular.ttf" />
     <Content Include="fonts\Roboto\Roboto-Regular.woff" />
     <Content Include="fonts\Roboto\Roboto-Regular.woff2" />
+    <None Include="Properties\PublishProfiles\BugTrackerMVC - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
